@@ -533,6 +533,9 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
         <button class="sidebar-nav-item" id="d-snav-records" onclick="showStuPage('records')">
           <span class="sni-icon">📋</span> 내 기록
         </button>
+        <button class="sidebar-nav-item" id="d-snav-mypage" onclick="showStuPage('mypage')">
+          <span class="sni-icon">👤</span> 내 계정
+        </button>
       </nav>
       <div class="sidebar-user">
         <div class="sidebar-user-avatar" id="stu-avatar">?</div>
@@ -615,6 +618,34 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
           </div>
         </div>
 
+        <!-- 내 계정 페이지 -->
+        <div id="stu-page-mypage" style="display:none">
+          <div class="desktop-content">
+            <div class="page-title">내 계정</div>
+            <div style="max-width:420px">
+              <div class="add-form" style="margin:0 0 16px">
+                <div class="add-form-title">🔒 비밀번호 변경</div>
+                <div id="stu-pw-alert"></div>
+                <div class="fg"><label class="flabel">현재 비밀번호</label><input type="password" id="stu-pw-current" class="finput" placeholder="현재 비밀번호"></div>
+                <div class="fg"><label class="flabel">새 비밀번호</label><input type="password" id="stu-pw-new" class="finput" placeholder="8자 이상"></div>
+                <div class="fg"><label class="flabel">새 비밀번호 확인</label><input type="password" id="stu-pw-confirm" class="finput" placeholder="새 비밀번호 재입력"></div>
+                <button class="btn btn-primary" onclick="changeMyPassword()">비밀번호 변경</button>
+              </div>
+            </div>
+          </div>
+          <div class="mobile-only">
+            <div class="sec-label">내 계정</div>
+            <div class="add-form" style="margin:0 16px 16px">
+              <div class="add-form-title">🔒 비밀번호 변경</div>
+              <div id="stu-pw-alert-m"></div>
+              <div class="fg"><label class="flabel">현재 비밀번호</label><input type="password" id="stu-pw-current-m" class="finput" placeholder="현재 비밀번호"></div>
+              <div class="fg"><label class="flabel">새 비밀번호</label><input type="password" id="stu-pw-new-m" class="finput" placeholder="8자 이상"></div>
+              <div class="fg"><label class="flabel">새 비밀번호 확인</label><input type="password" id="stu-pw-confirm-m" class="finput" placeholder="새 비밀번호 재입력"></div>
+              <button class="btn btn-primary" onclick="changeMyPasswordM()">비밀번호 변경</button>
+            </div>
+          </div>
+        </div>
+
         <!-- 내 기록 페이지 -->
         <div id="stu-page-records" style="display:none">
           <div class="desktop-content">
@@ -633,6 +664,7 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
     <nav class="mobile-nav">
       <button class="mnav-btn active" id="snav-search" onclick="showStuPage('search')"><span class="mnav-icon">🔍</span><span>학생 검색</span></button>
       <button class="mnav-btn" id="snav-records" onclick="showStuPage('records')"><span class="mnav-icon">📋</span><span>내 기록</span></button>
+      <button class="mnav-btn" id="snav-mypage" onclick="showStuPage('mypage')"><span class="mnav-icon">👤</span><span>내 계정</span></button>
     </nav>
   </div>
 </div>
@@ -658,6 +690,9 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
         <button class="sidebar-nav-item" id="d-tnav-admin" style="display:none" onclick="showTeaPage('admin')">
           <span class="sni-icon">⚙️</span> 계정 관리
           <span class="sidebar-badge" id="admin-badge" style="display:none">!</span>
+        </button>
+        <button class="sidebar-nav-item" id="d-tnav-mypage" onclick="showTeaPage('mypage')">
+          <span class="sni-icon">👤</span> 내 계정
         </button>
       </nav>
       <div class="sidebar-user">
@@ -768,6 +803,34 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
           </div>
         </div>
 
+        <!-- 내 계정 -->
+        <div id="tea-page-mypage" style="display:none">
+          <div class="desktop-content">
+            <div class="page-title">내 계정</div>
+            <div style="max-width:420px">
+              <div class="add-form" style="margin:0 0 16px">
+                <div class="add-form-title">🔒 비밀번호 변경</div>
+                <div id="tea-pw-alert"></div>
+                <div class="fg"><label class="flabel">현재 비밀번호</label><input type="password" id="tea-pw-current" class="finput" placeholder="현재 비밀번호"></div>
+                <div class="fg"><label class="flabel">새 비밀번호</label><input type="password" id="tea-pw-new" class="finput" placeholder="8자 이상"></div>
+                <div class="fg"><label class="flabel">새 비밀번호 확인</label><input type="password" id="tea-pw-confirm" class="finput" placeholder="새 비밀번호 재입력"></div>
+                <button class="btn btn-primary" onclick="changeMyPassword()">비밀번호 변경</button>
+              </div>
+            </div>
+          </div>
+          <div class="mobile-only">
+            <div class="sec-label">내 계정</div>
+            <div class="add-form" style="margin:0 16px 16px">
+              <div class="add-form-title">🔒 비밀번호 변경</div>
+              <div id="tea-pw-alert-m"></div>
+              <div class="fg"><label class="flabel">현재 비밀번호</label><input type="password" id="tea-pw-current-m" class="finput" placeholder="현재 비밀번호"></div>
+              <div class="fg"><label class="flabel">새 비밀번호</label><input type="password" id="tea-pw-new-m" class="finput" placeholder="8자 이상"></div>
+              <div class="fg"><label class="flabel">새 비밀번호 확인</label><input type="password" id="tea-pw-confirm-m" class="finput" placeholder="새 비밀번호 재입력"></div>
+              <button class="btn btn-primary" onclick="changeMyPasswordM()">비밀번호 변경</button>
+            </div>
+          </div>
+        </div>
+
         <!-- 관리자 -->
         <div id="tea-page-admin" style="display:none">
           <div class="desktop-content">
@@ -775,6 +838,9 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
             <div class="sec-label">가입 승인 대기</div>
             <div class="admin-grid" id="pending-list"></div>
             <div class="sec-label" style="margin-top:8px">전체 사용자</div>
+            <div style="background:var(--primary-p);border-radius:10px;padding:10px 14px;margin-bottom:10px;font-size:12px;color:var(--primary);line-height:1.6">
+              🔑 <b>비밀번호 초기화</b> 버튼을 누르면 해당 계정의 비밀번호가 <b>12345678</b>로 변경됩니다
+            </div>
             <div class="admin-grid" id="all-users-list"></div>
             <div class="sec-label" style="margin-top:8px">학생 명단 추가</div>
             <!-- 엑셀 업로드 -->
@@ -807,6 +873,9 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
             <div class="sec-label">가입 승인 대기</div>
             <div id="pending-list-m"></div>
             <div class="sec-label">전체 사용자</div>
+            <div style="background:var(--primary-p);border-radius:10px;padding:10px 14px;margin:0 16px 10px;font-size:12px;color:var(--primary);line-height:1.6">
+              🔑 <b>비밀번호 초기화</b>: <b>12345678</b>로 변경됩니다
+            </div>
             <div id="all-users-list-m"></div>
             <div class="sec-label">학생 명단 추가</div>
             <div class="add-form" style="margin:0 16px 12px">
@@ -842,6 +911,7 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
       <button class="mnav-btn active" id="tnav-dashboard" onclick="showTeaPage('dashboard')"><span class="mnav-icon">📊</span><span>현황판</span></button>
       <button class="mnav-btn" id="tnav-violations" onclick="showTeaPage('violations')"><span class="mnav-icon">📋</span><span>위반 기록</span></button>
       <button class="mnav-btn" id="tnav-admin" style="display:none" onclick="showTeaPage('admin')"><span class="mnav-icon">⚙️</span><span>관리</span><div class="mnav-badge" id="mobile-admin-badge" style="display:none"></div></button>
+      <button class="mnav-btn" id="tnav-mypage" onclick="showTeaPage('mypage')"><span class="mnav-icon">👤</span><span>내 계정</span></button>
     </nav>
   </div>
 </div>
@@ -1297,13 +1367,13 @@ function initStudentScreen(){
 }
 
 function showStuPage(page){
-  document.getElementById('stu-page-search').style.display=page==='search'?'block':'none';
-  document.getElementById('stu-page-records').style.display=page==='records'?'block':'none';
-  ['search','records'].forEach(p=>{
+  ['search','records','mypage'].forEach(p=>{
+    const el=document.getElementById('stu-page-'+p);
+    if(el)el.style.display=p===page?'block':'none';
     document.getElementById('snav-'+p)?.classList.toggle('active',p===page);
     document.getElementById('d-snav-'+p)?.classList.toggle('active',p===page);
   });
-  const titles={search:'학생 검색',records:'내 기록'};
+  const titles={search:'학생 검색',records:'내 기록',mypage:'내 계정'};
   document.getElementById('stu-dh-title').textContent=titles[page]||'';
   if(page==='records')loadMyRecords();
 }
@@ -1333,14 +1403,14 @@ function initTeacherScreen(){
 }
 
 function showTeaPage(page){
-  ['dashboard','violations','admin'].forEach(p=>{
+  ['dashboard','violations','admin','mypage'].forEach(p=>{
     const el=document.getElementById('tea-page-'+p);
     if(el)el.style.display=p===page?'block':'none';
     document.getElementById('tnav-'+p)?.classList.toggle('active',p===page);
     document.getElementById('d-tnav-'+p)?.classList.toggle('active',p===page);
   });
-  const titles={dashboard:'현황판',violations:'위반 기록',admin:'계정 관리'};
-  const subs={dashboard:'전체 학생의 지적 현황을 확인합니다',violations:'모든 위반 기록을 조회합니다',admin:'사용자 계정과 학생 명단을 관리합니다'};
+  const titles={dashboard:'현황판',violations:'위반 기록',admin:'계정 관리',mypage:'내 계정'};
+  const subs={dashboard:'전체 학생의 지적 현황을 확인합니다',violations:'모든 위반 기록을 조회합니다',admin:'사용자 계정과 학생 명단을 관리합니다',mypage:'비밀번호를 변경합니다'};
   document.getElementById('tea-dh-title').textContent=titles[page]||'';
   document.getElementById('tea-dh-sub').textContent=subs[page]||'';
   if(page==='admin')loadAdminPage();
@@ -2044,7 +2114,16 @@ async function loadAdminPage(){
     const u=d.data();const isSelf=d.id===currentUser.uid;
     const rm={admin:['관리자','bdg-danger'],teacher:['지도교사','bdg-purple'],student:['선도부학생','bdg-blue']};
     const [rl,bc]=rm[u.role]||['기타','bdg-gray'];
-    return`<div class="user-item"><div style="flex:1"><div class="user-name">${u.name} <span class="badge ${bc}" style="margin-left:6px">${rl}</span>${isSelf?' <span style="font-size:11px;color:var(--g400)">(나)</span>':''}</div><div class="user-email">${u.email}</div></div>${!isSelf?`<button class="btn btn-ghost btn-xs" onclick="deactivateUser('${d.id}')">비활성화</button>`:''}</div>`;}).join('');
+    return`<div class="user-item">
+      <div style="flex:1;min-width:0">
+        <div class="user-name">${u.name} <span class="badge ${bc}" style="margin-left:6px">${rl}</span>${isSelf?' <span style="font-size:11px;color:var(--g400)">(나)</span>':''}</div>
+        <div class="user-email">${u.email}</div>
+      </div>
+      ${!isSelf?`<div style="display:flex;gap:6px;flex-shrink:0">
+        <button class="btn btn-warning btn-xs" onclick="adminResetPassword('${d.id}','${u.name}','${u.email}')">비번 초기화</button>
+        <button class="btn btn-ghost btn-xs" onclick="deactivateUser('${d.id}')">비활성화</button>
+      </div>`:''}
+    </div>`;}).join('');
   const al=document.getElementById('all-users-list');if(al)al.innerHTML=userHtml;
   const alm=document.getElementById('all-users-list-m');if(alm)alm.innerHTML=userHtml;
 }
@@ -2308,6 +2387,69 @@ setTimeout(()=>{
   document.querySelector('.desktop-content')?.addEventListener('scroll', handleScroll, {passive:true});
   document.querySelector('.mobile-content')?.addEventListener('scroll', handleScroll, {passive:true});
 }, 2000);
+
+
+// ═══════════════════════════════════════
+// 비밀번호 변경 (본인)
+// ═══════════════════════════════════════
+async function changeMyPassword(){
+  // 데스크탑/모바일 입력값 통합
+  const isTeacher = currentUserData.role !== 'student';
+  const prefix = isTeacher ? 'tea' : 'stu';
+  const current = (document.getElementById(prefix+'-pw-current')?.value || document.getElementById(prefix+'-pw-current-m')?.value || '').trim();
+  const newPw   = (document.getElementById(prefix+'-pw-new')?.value     || document.getElementById(prefix+'-pw-new-m')?.value     || '').trim();
+  const confirm = (document.getElementById(prefix+'-pw-confirm')?.value  || document.getElementById(prefix+'-pw-confirm-m')?.value  || '').trim();
+
+  const alertId = document.getElementById(prefix+'-pw-alert') ? prefix+'-pw-alert' : prefix+'-pw-alert-m';
+
+  if(!current||!newPw||!confirm) return showAlert(alertId,'모든 항목을 입력하세요.');
+  if(newPw.length<8) return showAlert(alertId,'새 비밀번호는 8자 이상이어야 합니다.');
+  if(newPw!==confirm) return showAlert(alertId,'새 비밀번호가 일치하지 않습니다.');
+  if(current===newPw) return showAlert(alertId,'현재 비밀번호와 동일합니다.');
+
+  try{
+    // 재인증 후 비밀번호 변경
+    const cred = firebase.auth.EmailAuthProvider.credential(currentUser.email, current);
+    await currentUser.reauthenticateWithCredential(cred);
+    await currentUser.updatePassword(newPw);
+
+    // 입력창 초기화
+    ['current','new','confirm'].forEach(f=>{
+      const d=document.getElementById(prefix+'-pw-'+f); if(d)d.value='';
+      const m=document.getElementById(prefix+'-pw-'+f+'-m'); if(m)m.value='';
+    });
+    showAlert(prefix+'-pw-alert','✅ 비밀번호가 변경됐습니다.','success');
+    showAlert(prefix+'-pw-alert-m','✅ 비밀번호가 변경됐습니다.','success');
+  }catch(e){
+    const msgs={
+      'auth/wrong-password':'현재 비밀번호가 올바르지 않습니다.',
+      'auth/too-many-requests':'시도 횟수 초과. 잠시 후 다시 시도하세요.',
+      'auth/requires-recent-login':'보안을 위해 로그아웃 후 다시 로그인해 주세요.'
+    };
+    showAlert(alertId, msgs[e.code]||'오류: '+e.message);
+  }
+}
+// 모바일에서도 같은 함수 호출
+function changeMyPasswordM(){ changeMyPassword(); }
+
+// ═══════════════════════════════════════
+// 비밀번호 초기화 (관리자 → 특정 사용자)
+// Firebase는 클라이언트에서 타인의 비밀번호를 직접 변경할 수 없으므로
+// 비밀번호 재설정 이메일을 발송합니다
+// ═══════════════════════════════════════
+async function adminResetPassword(uid, name, email){
+  if(!confirm(`${name} 계정(${email})의 비밀번호를 초기화하시겠습니까?\n\n해당 계정으로 비밀번호 재설정 링크가 이메일로 발송됩니다.`)) return;
+  try{
+    await auth.sendPasswordResetEmail(email);
+    alert(`✅ ${name}(${email})에게 비밀번호 재설정 링크를 발송했습니다.\n\n해당 사용자가 이메일의 링크를 클릭하면 새 비밀번호로 설정할 수 있습니다.`);
+  }catch(e){
+    const msgs={
+      'auth/user-not-found':'해당 이메일의 계정을 찾을 수 없습니다.',
+      'auth/too-many-requests':'요청이 너무 많습니다. 잠시 후 다시 시도하세요.'
+    };
+    alert('오류: '+(msgs[e.code]||e.message));
+  }
+}
 
 // 엔터키 로그인
 document.addEventListener('keydown',e=>{

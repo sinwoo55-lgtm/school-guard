@@ -80,6 +80,7 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
 }
 /* 사용자/승인 목록 버튼 */
 .user-action-btns{display:flex;gap:6px;flex-shrink:0}
+.user-action-btns .btn{margin-top:0 !important}
 /* 인라인 수정/삭제 버튼 */
 .vio-edit-btn{background:white;border:1.5px solid var(--g300);color:var(--g600);font-size:12px;font-weight:600;padding:4px 10px;border-radius:6px;cursor:pointer;font-family:inherit;transition:all .15s}
 .vio-edit-btn:hover{border-color:var(--primary);color:var(--primary)}
@@ -839,7 +840,7 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
             <div class="admin-grid" id="pending-list"></div>
             <div class="sec-label" style="margin-top:8px">전체 사용자</div>
             <div style="background:var(--primary-p);border-radius:10px;padding:10px 14px;margin-bottom:10px;font-size:12px;color:var(--primary);line-height:1.6">
-              🔑 <b>비밀번호 초기화</b> 버튼을 누르면 해당 계정의 비밀번호가 <b>12345678</b>로 변경됩니다
+              🔑 <b>비번 초기화</b> 버튼을 누르면 해당 계정 이메일로 <b>비밀번호 재설정 링크</b>가 발송됩니다. 사용자가 링크를 클릭하면 새 비밀번호를 직접 설정할 수 있습니다.
             </div>
             <div class="admin-grid" id="all-users-list"></div>
             <div class="sec-label" style="margin-top:8px">학생 명단 추가</div>
@@ -874,7 +875,7 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
             <div id="pending-list-m"></div>
             <div class="sec-label">전체 사용자</div>
             <div style="background:var(--primary-p);border-radius:10px;padding:10px 14px;margin:0 16px 10px;font-size:12px;color:var(--primary);line-height:1.6">
-              🔑 <b>비밀번호 초기화</b>: <b>12345678</b>로 변경됩니다
+              🔑 <b>비번 초기화</b> 버튼: 해당 이메일로 재설정 링크가 발송됩니다
             </div>
             <div id="all-users-list-m"></div>
             <div class="sec-label">학생 명단 추가</div>
@@ -2119,7 +2120,7 @@ async function loadAdminPage(){
         <div class="user-name">${u.name} <span class="badge ${bc}" style="margin-left:6px">${rl}</span>${isSelf?' <span style="font-size:11px;color:var(--g400)">(나)</span>':''}</div>
         <div class="user-email">${u.email}</div>
       </div>
-      ${!isSelf?`<div style="display:flex;gap:6px;flex-shrink:0">
+      ${!isSelf?`<div class="user-action-btns">
         <button class="btn btn-warning btn-xs" onclick="adminResetPassword('${d.id}','${u.name}','${u.email}')">비번 초기화</button>
         <button class="btn btn-ghost btn-xs" onclick="deactivateUser('${d.id}')">비활성화</button>
       </div>`:''}

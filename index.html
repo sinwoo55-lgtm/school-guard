@@ -1215,8 +1215,17 @@ async function doLogin(){
   btn.textContent='로그인 중...';btn.disabled=true;
   try{await auth.signInWithEmailAndPassword(email,pw);}
   catch(e){
-    const msgs={'auth/user-not-found':'존재하지 않는 이메일입니다.','auth/wrong-password':'비밀번호가 올바르지 않습니다.','auth/invalid-email':'이메일 형식이 올바르지 않습니다.','auth/too-many-requests':'시도 횟수 초과. 잠시 후 다시 시도하세요.','auth/network-request-failed':'네트워크 오류. 인터넷 연결을 확인하세요.'};
-    showAlert('login-alert',msgs[e.code]||'오류: '+e.message);
+    const msgs={
+      'auth/invalid-credential':'이메일 또는 비밀번호가 올바르지 않습니다.',
+      'auth/invalid-login-credentials':'이메일 또는 비밀번호가 올바르지 않습니다.',
+      'auth/user-not-found':'이메일 또는 비밀번호가 올바르지 않습니다.',
+      'auth/wrong-password':'이메일 또는 비밀번호가 올바르지 않습니다.',
+      'auth/user-disabled':'이 계정은 비활성화되어 로그인할 수 없습니다. 관리자에게 문의해 주세요.',
+      'auth/invalid-email':'이메일 형식이 올바르지 않습니다.',
+      'auth/too-many-requests':'로그인 시도가 너무 많습니다. 잠시 후 다시 시도해 주세요.',
+      'auth/network-request-failed':'네트워크 연결을 확인한 뒤 다시 시도해 주세요.'
+    };
+    showAlert('login-alert',msgs[e.code]||'로그인에 실패했습니다. 잠시 후 다시 시도해 주세요.');
     btn.textContent='로그인';btn.disabled=false;
   }
 }

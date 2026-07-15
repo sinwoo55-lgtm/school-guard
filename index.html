@@ -843,6 +843,7 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
               🔑 <b>재설정 링크 발송</b> 버튼을 누르면 해당 계정 이메일로 비밀번호 재설정 링크가 발송됩니다. 사용자가 링크를 클릭하면 새 비밀번호를 직접 설정할 수 있습니다.
             </div>
             <div class="admin-grid" id="all-users-list"></div>
+            <div id="admin-student-roster-d">
             <div class="sec-label" style="margin-top:8px">학생 명단 추가</div>
             <!-- 엑셀 업로드 -->
             <div class="add-form" style="margin-bottom:12px">
@@ -869,6 +870,7 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
               <button class="btn btn-primary" onclick="addStudent()">학생 추가</button>
               <div id="add-alert" style="margin-top:8px"></div>
             </div>
+            </div>
           </div>
           <div class="mobile-only">
             <div class="sec-label">가입 승인 대기</div>
@@ -878,6 +880,7 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
               🔑 <b>재설정 링크 발송</b> 버튼: 해당 이메일로 비밀번호 재설정 링크가 발송됩니다
             </div>
             <div id="all-users-list-m"></div>
+            <div id="admin-student-roster-m">
             <div class="sec-label">학생 명단 추가</div>
             <div class="add-form" style="margin:0 16px 12px">
               <div class="add-form-title">📊 엑셀 파일로 일괄 추가</div>
@@ -901,6 +904,7 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
               <div class="add-grid21"><div class="fg" style="margin:0"><label class="flabel">번호</label><input type="number" id="add-num-m" class="finput" placeholder="1" min="1" max="50"></div><div class="fg" style="margin:0"><label class="flabel">이름</label><input type="text" id="add-sname-m" class="finput" placeholder="홍길동"></div></div>
               <button class="btn btn-primary" onclick="addStudentM()">학생 추가</button>
               <div id="add-alert-m" style="margin-top:8px"></div>
+            </div>
             </div>
           </div>
         </div>
@@ -1389,9 +1393,13 @@ function initTeacherScreen(){
   document.getElementById('tea-sidebar-name').textContent=n;
   document.getElementById('tea-sidebar-role').textContent=r;
   document.getElementById('tea-avatar').textContent=firstChar(n);
-  if(currentUserData.role==='admin'){
+  if(['admin','teacher'].includes(currentUserData.role)){
     document.getElementById('d-tnav-admin').style.display='flex';
     document.getElementById('tnav-admin').style.display='flex';
+  }
+  if(currentUserData.role==='teacher'){
+    document.getElementById('admin-student-roster-d').style.display='none';
+    document.getElementById('admin-student-roster-m').style.display='none';
   }
   // 지도교사와 관리자는 학생 기록을 영구 삭제할 수 있음
   if(['admin','teacher'].includes(currentUserData.role)){
@@ -2101,22 +2109,38 @@ function renderViolations(){
 }
 
 // ═══════════════════════════════════════
-// 관리자 페이지
+// 계정 관리 페이지
 // ═══════════════════════════════════════
+function canManageUserAccount(targetRole){
+  const actorRole=currentUserData?.role;
+  if(actorRole==='admin')return targetRole!=='admin';
+  return actorRole==='teacher'&&targetRole==='student';
+}
+
+function accountManagementDenied(targetRole){
+  if(targetRole==='admin')return '관리자 계정은 이 화면에서 변경할 수 없습니다.';
+  if(currentUserData?.role==='teacher')return '지도교사는 학생 계정만 관리할 수 있습니다.';
+  return '계정 관리 권한이 없습니다.';
+}
+
 async function loadAdminPage(){
+  if(!['admin','teacher'].includes(currentUserData?.role))return;
+  const isTeacher=currentUserData.role==='teacher';
   const pendSnap=await db.collection('users').where('status','==','pending').get();
-  const cnt=pendSnap.size;
+  const pendingUsers=pendSnap.docs.filter(d=>!isTeacher||d.data().role==='student');
+  const cnt=pendingUsers.length;
   document.getElementById('admin-badge').style.display=cnt>0?'inline':'none';
   document.getElementById('mobile-admin-badge').style.display=cnt>0?'block':'none';
 
-  const pendHtml=pendSnap.empty
+  const pendHtml=pendingUsers.length===0
     ?'<div class="user-item" style="justify-content:center;color:var(--g400);font-size:14px;grid-column:span 2">대기 중인 신청이 없습니다</div>'
-    :pendSnap.docs.map(d=>{const u=d.data();return`<div class="user-item"><div style="flex:1"><div class="user-name">${u.name} <span class="badge ${u.role==='student'?'bdg-blue':'bdg-purple'}" style="margin-left:6px">${u.role==='student'?'선도부학생':'지도교사'}</span></div><div class="user-email">${u.email}</div>${u.grade?`<div class="user-email">${u.grade}학년 ${u.class}반</div>`:''}</div><div class="user-action-btns"><button class="btn btn-success btn-xs" onclick="approveUser('${d.id}','${u.role}')">승인</button><button class="btn btn-danger btn-xs" onclick="rejectUser('${d.id}')">거절</button></div></div>`;}).join('');
+    :pendingUsers.map(d=>{const u=d.data();return`<div class="user-item"><div style="flex:1"><div class="user-name">${u.name} <span class="badge ${u.role==='student'?'bdg-blue':'bdg-purple'}" style="margin-left:6px">${u.role==='student'?'선도부학생':'지도교사'}</span></div><div class="user-email">${u.email}</div>${u.grade?`<div class="user-email">${u.grade}학년 ${u.class}반</div>`:''}</div><div class="user-action-btns"><button class="btn btn-success btn-xs" onclick="approveUser('${d.id}','${u.role}')">승인</button><button class="btn btn-danger btn-xs" onclick="rejectUser('${d.id}')">거절</button></div></div>`;}).join('');
   const pl=document.getElementById('pending-list');if(pl)pl.innerHTML=pendHtml;
   const plm=document.getElementById('pending-list-m');if(plm)plm.innerHTML=pendHtml;
 
   const usersSnap=await db.collection('users').where('status','==','active').get();
-  const userHtml=usersSnap.docs.map(d=>{
+  const activeUsers=usersSnap.docs.filter(d=>!isTeacher||d.data().role==='student');
+  const userHtml=activeUsers.map(d=>{
     const u=d.data();const isSelf=d.id===currentUser.uid;
     const rm={admin:['관리자','bdg-danger'],teacher:['지도교사','bdg-purple'],student:['선도부학생','bdg-blue']};
     const [rl,bc]=rm[u.role]||['기타','bdg-gray'];
@@ -2125,7 +2149,7 @@ async function loadAdminPage(){
         <div class="user-name">${u.name} <span class="badge ${bc}" style="margin-left:6px">${rl}</span>${isSelf?' <span style="font-size:11px;color:var(--g400)">(나)</span>':''}</div>
         <div class="user-email">${u.email}</div>
       </div>
-      ${!isSelf&&u.role!=='admin'?`<div class="user-action-btns">
+      ${!isSelf&&canManageUserAccount(u.role)?`<div class="user-action-btns">
         <button class="btn btn-warning btn-xs" onclick="adminResetPassword('${d.id}','${u.name}','${u.email}')">재설정 링크 발송</button>
         <button class="btn btn-ghost btn-xs" onclick="deactivateUser('${d.id}')">비활성화</button>
       </div>`:''}
@@ -2135,29 +2159,31 @@ async function loadAdminPage(){
 }
 
 async function approveUser(uid,role){
-  if(role==='admin'){alert('관리자 계정은 이 화면에서 변경할 수 없습니다.');return;}
-  const data={status:'active',approvedAt:firebase.firestore.FieldValue.serverTimestamp()};
-  if(role==='student'){const exp=new Date();exp.setFullYear(exp.getFullYear()+1);data.expiresAt=exp;}
-  await db.collection('users').doc(uid).update(data);alert('승인됐습니다.');loadAdminPage();
-}
-async function rejectUser(uid){
-  if(currentUserData?.role!=='admin'){alert('계정 관리 권한이 없습니다.');return;}
   const target=await db.collection('users').doc(uid).get();
   if(!target.exists){alert('계정을 찾을 수 없습니다.');return;}
-  if(target.data().role==='admin'){alert('관리자 계정은 이 화면에서 변경할 수 없습니다.');return;}
+  const targetRole=target.data().role;
+  if(!canManageUserAccount(targetRole)){alert(accountManagementDenied(targetRole));return;}
+  const data={status:'active',approvedAt:firebase.firestore.FieldValue.serverTimestamp()};
+  if(targetRole==='student'){const exp=new Date();exp.setFullYear(exp.getFullYear()+1);data.expiresAt=exp;}
+  await target.ref.update(data);alert('승인됐습니다.');loadAdminPage();
+}
+async function rejectUser(uid){
+  const target=await db.collection('users').doc(uid).get();
+  if(!target.exists){alert('계정을 찾을 수 없습니다.');return;}
+  if(!canManageUserAccount(target.data().role)){alert(accountManagementDenied(target.data().role));return;}
   if(!confirm('거절하시겠습니까?'))return;
   await target.ref.update({status:'rejected'});loadAdminPage();
 }
 async function deactivateUser(uid){
-  if(currentUserData?.role!=='admin'){alert('계정 관리 권한이 없습니다.');return;}
   const target=await db.collection('users').doc(uid).get();
   if(!target.exists){alert('계정을 찾을 수 없습니다.');return;}
-  if(target.data().role==='admin'){alert('관리자 계정은 비활성화할 수 없습니다.');return;}
+  if(!canManageUserAccount(target.data().role)){alert(accountManagementDenied(target.data().role));return;}
   if(!confirm('비활성화하시겠습니까?'))return;
   await target.ref.update({status:'expired'});loadAdminPage();
 }
 
 async function addStudent(){
+  if(currentUserData?.role!=='admin'){alert('학생 명단은 관리자만 추가할 수 있습니다.');return;}
   const grade=parseInt(document.getElementById('add-grade').value);
   const cls=parseInt(document.getElementById('add-class').value);
   const num=parseInt(document.getElementById('add-num').value);
@@ -2171,6 +2197,7 @@ async function addStudent(){
   await loadStudents();renderSearch();renderDashboard();
 }
 async function addStudentM(){
+  if(currentUserData?.role!=='admin'){alert('학생 명단은 관리자만 추가할 수 있습니다.');return;}
   const grade=parseInt(document.getElementById('add-grade-m').value);
   const cls=parseInt(document.getElementById('add-class-m').value);
   const num=parseInt(document.getElementById('add-num-m').value);
@@ -2291,6 +2318,7 @@ function handleExcelUpload(input) {
 }
 
 async function confirmExcelUpload(students, btn) {
+  if(currentUserData?.role!=='admin'){alert('학생 명단은 관리자만 추가할 수 있습니다.');return;}
   if (!students || students.length === 0) return;
   if (!confirm(`${students.length}명을 업로드하시겠습니까?`)) return;
 
@@ -2454,16 +2482,15 @@ async function changeMyPassword(){
 function changeMyPasswordM(){ changeMyPassword(); }
 
 // ═══════════════════════════════════════
-// 비밀번호 초기화 (관리자 → 특정 사용자)
+// 비밀번호 재설정 링크 발송 (관리자·지도교사 → 권한 범위 내 사용자)
 // Firebase는 클라이언트에서 타인의 비밀번호를 직접 변경할 수 없으므로
 // 비밀번호 재설정 이메일을 발송합니다
 // ═══════════════════════════════════════
 async function adminResetPassword(uid, name, email){
   try{
-    if(currentUserData?.role!=='admin'){alert('계정 관리 권한이 없습니다.');return;}
     const target=await db.collection('users').doc(uid).get();
     if(!target.exists){alert('계정을 찾을 수 없습니다.');return;}
-    if(target.data().role==='admin'){alert('관리자 계정에는 비밀번호 재설정 링크를 발송할 수 없습니다.');return;}
+    if(!canManageUserAccount(target.data().role)){alert(accountManagementDenied(target.data().role));return;}
     if(!confirm(`${name} 계정(${email})으로 비밀번호 재설정 링크를 발송하시겠습니까?\n\n사용자가 이메일의 링크를 통해 새 비밀번호를 직접 설정합니다.`)) return;
     await auth.sendPasswordResetEmail(email);
     alert(`✅ ${name}(${email})에게 비밀번호 재설정 링크를 발송했습니다.\n\n해당 사용자가 이메일의 링크를 클릭하면 새 비밀번호로 설정할 수 있습니다.`);

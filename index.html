@@ -78,6 +78,9 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
   word-break:keep-all !important;line-height:1.3 !important;
   letter-spacing:-.1px !important;box-sizing:border-box !important;
 }
+/* 학생 상세 팝업: 기본 동작 4개를 한 줄에 균등 배치 */
+.detail-action-row{grid-template-columns:repeat(4,minmax(0,1fr)) !important;gap:8px;width:100%}
+.detail-action-row>.btn{padding:11px 4px !important;font-size:12.5px !important;letter-spacing:-.2px !important;white-space:nowrap !important}
 /* 사용자/승인 목록 버튼 */
 .user-action-btns{display:flex;gap:6px;flex-shrink:0}
 .user-action-btns .btn{margin-top:0 !important}
@@ -265,7 +268,7 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
 .add-grid21{display:grid;grid-template-columns:80px 1fr;gap:8px;margin-bottom:8px}
 
 /* 상세 모달 액션 */
-.detail-actions{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.detail-actions{display:block;width:100%;margin-bottom:18px}
 
 /* ═══════════════════════════════════════
    DESKTOP LAYOUT (1024px+)
@@ -1212,8 +1215,17 @@ async function doLogin(){
   btn.textContent='로그인 중...';btn.disabled=true;
   try{await auth.signInWithEmailAndPassword(email,pw);}
   catch(e){
-    const msgs={'auth/user-not-found':'존재하지 않는 이메일입니다.','auth/wrong-password':'비밀번호가 올바르지 않습니다.','auth/invalid-email':'이메일 형식이 올바르지 않습니다.','auth/too-many-requests':'시도 횟수 초과. 잠시 후 다시 시도하세요.','auth/network-request-failed':'네트워크 오류. 인터넷 연결을 확인하세요.'};
-    showAlert('login-alert',msgs[e.code]||'오류: '+e.message);
+    const msgs={
+      'auth/invalid-credential':'이메일 또는 비밀번호가 올바르지 않습니다.',
+      'auth/invalid-login-credentials':'이메일 또는 비밀번호가 올바르지 않습니다.',
+      'auth/user-not-found':'이메일 또는 비밀번호가 올바르지 않습니다.',
+      'auth/wrong-password':'이메일 또는 비밀번호가 올바르지 않습니다.',
+      'auth/user-disabled':'이 계정은 비활성화되어 로그인할 수 없습니다. 관리자에게 문의해 주세요.',
+      'auth/invalid-email':'이메일 형식이 올바르지 않습니다.',
+      'auth/too-many-requests':'로그인 시도가 너무 많습니다. 잠시 후 다시 시도해 주세요.',
+      'auth/network-request-failed':'네트워크 연결을 확인한 뒤 다시 시도해 주세요.'
+    };
+    showAlert('login-alert',msgs[e.code]||'로그인에 실패했습니다. 잠시 후 다시 시도해 주세요.');
     btn.textContent='로그인';btn.disabled=false;
   }
 }
@@ -1786,9 +1798,8 @@ async function openStudentDetail(sid){
 
   // 액션 버튼 (통일된 크기)
   const canPermanentlyDelete = ['admin','teacher'].includes(currentUserData.role);
-  const btnCount = 3 + (ns?1:0) + (canPermanentlyDelete?1:0);
   document.getElementById('md-actions').innerHTML=`
-    <div class="action-btns" style="grid-template-columns:repeat(${btnCount},1fr)">
+    <div class="action-btns detail-action-row">
       <button class="btn btn-primary btn-sm" onclick="openViolationFromDetail('${sid}')">지적 입력</button>
       <button class="btn btn-purple btn-sm" onclick="assignExtraService()">봉사 부여</button>
       ${ns?`<button class="btn btn-success btn-sm" onclick="completeService()">봉사 완료</button>`:''}

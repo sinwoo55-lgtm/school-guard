@@ -894,6 +894,7 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
                 <input type="file" id="excel-file" accept=".xlsx,.xls" style="display:none" onchange="handleExcelUpload(this)">
                 <button class="btn btn-outline btn-sm" onclick="document.getElementById('excel-file').click()">파일 선택</button>
                 <button class="btn btn-outline btn-sm" onclick="downloadStudentTemplate()">양식 다운로드</button>
+                <button class="btn btn-outline btn-sm" onclick="downloadCurrentStudentRoster()">현재 명렬 다운로드</button>
               </div>
               <div style="background:var(--primary-p);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--primary);line-height:1.7">
                 <b>📋 엑셀 양식 안내</b><br>
@@ -931,6 +932,7 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
                 <input type="file" id="excel-file-m" accept=".xlsx,.xls" style="display:none" onchange="handleExcelUpload(this)">
                 <button class="btn btn-outline btn-sm" onclick="document.getElementById('excel-file-m').click()">파일 선택</button>
                 <button class="btn btn-outline btn-sm" onclick="downloadStudentTemplate()">양식 다운로드</button>
+                <button class="btn btn-outline btn-sm" onclick="downloadCurrentStudentRoster()">현재 명렬 다운로드</button>
               </div>
               <div style="background:var(--primary-p);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--primary);line-height:1.7">
                 <b>📋 엑셀 양식 안내</b><br>
@@ -2273,6 +2275,33 @@ function downloadStudentTemplate() {
   XLSX.utils.book_append_sheet(workbook, rosterSheet, '학생 명단');
   XLSX.utils.book_append_sheet(workbook, guideSheet, '작성 안내');
   XLSX.writeFile(workbook, '학생_명단_업로드_양식.xlsx');
+}
+
+function downloadCurrentStudentRoster() {
+  if (currentUserData?.role !== 'admin') {
+    alert('학생 명단 다운로드는 관리자만 사용할 수 있습니다.');
+    return;
+  }
+  if (typeof XLSX === 'undefined') {
+    alert('엑셀 파일을 준비하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+    return;
+  }
+  if (!allStudents.length) {
+    alert('다운로드할 학생 명단이 없습니다.');
+    return;
+  }
+
+  const students = [...allStudents].sort((a, b) =>
+    a.grade - b.grade || a.class - b.class || a.number - b.number || String(a.name).localeCompare(String(b.name), 'ko')
+  );
+  const rows = [['학년', '반', '번호', '이름'], ...students.map(s => [s.grade, s.class, s.number, s.name])];
+  const workbook = XLSX.utils.book_new();
+  const rosterSheet = XLSX.utils.aoa_to_sheet(rows);
+  rosterSheet['!cols'] = [{ wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 18 }];
+  XLSX.utils.book_append_sheet(workbook, rosterSheet, '학생 명단');
+
+  const today = new Date().toISOString().slice(0, 10).replaceAll('-', '');
+  XLSX.writeFile(workbook, `현재_학생_명단_${today}.xlsx`);
 }
 
 function handleExcelUpload(input) {

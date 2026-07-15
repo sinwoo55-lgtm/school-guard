@@ -1216,6 +1216,8 @@ function showToast(msg){
   clearTimeout(toastTimer);
   toastTimer=setTimeout(()=>toast.classList.remove('show'),3000);
 }
+// 브라우저 기본 알림창(사이트 제목이 함께 노출됨) 대신 앱 내부 알림을 사용
+window.alert=(msg)=>showToast(String(msg));
 
 async function doLogin(){
   const email=document.getElementById('login-email').value.trim();

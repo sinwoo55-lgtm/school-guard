@@ -370,7 +370,8 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
     padding:clamp(24px,2.5vw,36px);
     background:var(--g50);
   }
-  .desktop-content>*{max-width:1440px;margin-left:auto;margin-right:auto}
+  /* 모든 데스크탑 콘텐츠가 동일한 세로 기준선과 최대 폭을 공유하도록 고정 */
+  .desktop-content>*{width:100%;max-width:1440px;box-sizing:border-box;margin-left:auto;margin-right:auto}
 
   /* 페이지 타이틀 */
   .page-title{font-size:20px;font-weight:800;color:var(--g900);letter-spacing:-.4px;margin-bottom:20px}
@@ -401,7 +402,7 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
   .desktop-search-row .search-icon{left:13px;top:50%;transform:translateY(-50%)}
   .chip-row{padding:0;margin-bottom:16px}
   .search-wrap{padding:0;margin-bottom:0}
-  .student-filter-card{margin:0 0 18px;padding:16px 18px}
+  .student-filter-card{width:100%;margin:0 auto 18px;padding:16px 18px}
   .student-search-toolbar{margin-bottom:14px}
   .filter-groups{grid-template-columns:1fr 1fr;gap:18px}
   .filter-group{grid-template-columns:44px 1fr}

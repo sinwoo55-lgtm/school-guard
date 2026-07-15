@@ -715,9 +715,9 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
           <div class="desktop-header-sub" id="tea-dh-sub">전체 학생의 지적 현황을 확인합니다</div>
         </div>
         <div style="display:flex;gap:8px;align-items:center" id="tea-header-btns">
-          <button class="btn btn-warning btn-sm" onclick="confirmResetAll()" style="white-space:nowrap">전체 초기화</button>
+          <button class="btn btn-warning btn-sm" onclick="confirmResetAll()" style="white-space:nowrap">전체 학생 집계 재시작</button>
           <span id="admin-hard-delete-btn" style="display:none">
-            <button class="btn btn-danger btn-sm" onclick="confirmHardDeleteAll()" style="white-space:nowrap">전체 완전 삭제</button>
+            <button class="btn btn-danger btn-sm" onclick="confirmHardDeleteAll()" style="white-space:nowrap">전체 학생 기록 영구 삭제</button>
           </span>
         </div>
       </div>
@@ -726,8 +726,8 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
       <div class="mobile-header">
         <div><div class="mh-title" id="tea-mh-name">선생님</div><div class="mh-sub" id="tea-mh-role">지도교사</div></div>
         <div style="display:flex;gap:8px;align-items:center">
-          <button onclick="confirmResetAll()" style="background:var(--warning);border:none;color:white;padding:6px 10px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">전체 초기화</button>
-          <span id="admin-hard-delete-btn-m" style="display:none"><button onclick="confirmHardDeleteAll()" style="background:var(--danger);border:none;color:white;padding:6px 10px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">완전 삭제</button></span>
+          <button onclick="confirmResetAll()" style="background:var(--warning);border:none;color:white;padding:6px 10px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">전체 집계 재시작</button>
+          <span id="admin-hard-delete-btn-m" style="display:none"><button onclick="confirmHardDeleteAll()" style="background:var(--danger);border:none;color:white;padding:6px 10px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">전체 기록 영구 삭제</button></span>
           <button class="mh-logout" onclick="doLogout()">로그아웃</button>
         </div>
       </div>
@@ -840,7 +840,7 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
             <div class="admin-grid" id="pending-list"></div>
             <div class="sec-label" style="margin-top:8px">전체 사용자</div>
             <div style="background:var(--primary-p);border-radius:10px;padding:10px 14px;margin-bottom:10px;font-size:12px;color:var(--primary);line-height:1.6">
-              🔑 <b>비번 초기화</b> 버튼을 누르면 해당 계정 이메일로 <b>비밀번호 재설정 링크</b>가 발송됩니다. 사용자가 링크를 클릭하면 새 비밀번호를 직접 설정할 수 있습니다.
+              🔑 <b>재설정 링크 발송</b> 버튼을 누르면 해당 계정 이메일로 비밀번호 재설정 링크가 발송됩니다. 사용자가 링크를 클릭하면 새 비밀번호를 직접 설정할 수 있습니다.
             </div>
             <div class="admin-grid" id="all-users-list"></div>
             <div class="sec-label" style="margin-top:8px">학생 명단 추가</div>
@@ -875,7 +875,7 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
             <div id="pending-list-m"></div>
             <div class="sec-label">전체 사용자</div>
             <div style="background:var(--primary-p);border-radius:10px;padding:10px 14px;margin:0 16px 10px;font-size:12px;color:var(--primary);line-height:1.6">
-              🔑 <b>비번 초기화</b> 버튼: 해당 이메일로 재설정 링크가 발송됩니다
+              🔑 <b>재설정 링크 발송</b> 버튼: 해당 이메일로 비밀번호 재설정 링크가 발송됩니다
             </div>
             <div id="all-users-list-m"></div>
             <div class="sec-label">학생 명단 추가</div>
@@ -967,22 +967,22 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-header">
-      <div class="modal-title">⚠️ 누적 횟수 초기화</div>
+      <div class="modal-title">⚠️ 이 학생의 집계 재시작</div>
       <button class="modal-close" onclick="closeModal('modal-reset')">✕</button>
     </div>
     <div class="modal-sub" id="reset-info"></div>
-    <div style="background:var(--danger-p);border-radius:12px;padding:14px 16px;margin-bottom:18px">
-      <div style="font-size:14px;font-weight:700;color:var(--danger);margin-bottom:6px">⚠️ 주의 — 이 작업은 되돌릴 수 없습니다</div>
-      <div style="font-size:13px;color:var(--danger);line-height:1.6;opacity:.85">
-        · 지적 횟수가 0으로 초기화됩니다<br>
-        · 봉사 완료 횟수도 0으로 초기화됩니다<br>
-        · 기존 위반 기록 데이터는 삭제되지 않습니다
+    <div style="background:var(--warning-p);border-radius:12px;padding:14px 16px;margin-bottom:18px">
+      <div style="font-size:14px;font-weight:700;color:var(--warning);margin-bottom:6px">집계 기준점이 현재 시점으로 변경됩니다</div>
+      <div style="font-size:13px;color:var(--warning);line-height:1.6;opacity:.9">
+        · 지적 횟수와 봉사 완료 횟수를 0부터 다시 집계합니다<br>
+        · 기존 위반 기록은 삭제되지 않고 그대로 보존됩니다<br>
+        · 재시작 이후 등록된 기록부터 새 집계에 반영됩니다
       </div>
     </div>
     <div style="background:var(--g50);border-radius:10px;padding:12px 14px;margin-bottom:18px;font-size:13px;color:var(--g600)">
-      초기화를 진행하려면 아래 버튼을 눌러 최종 확인해주세요.
+      집계를 새로 시작하려면 아래 버튼을 눌러 확인해 주세요.
     </div>
-    <button class="btn btn-danger" id="reset-confirm-btn" onclick="executeReset()">최종 확인 — 초기화 진행</button>
+    <button class="btn btn-warning" id="reset-confirm-btn" onclick="executeReset()">확인 — 이 학생 집계 재시작</button>
     <button class="btn btn-ghost" style="margin-top:8px" onclick="closeModal('modal-reset')">취소</button>
   </div>
 </div>
@@ -1015,40 +1015,39 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
   </div>
 </div>
 
-<!-- ══ MODAL: 전체 초기화 확인 ══ -->
+<!-- ══ MODAL: 전체 학생 집계 재시작 확인 ══ -->
 <div id="modal-reset-all" class="modal-overlay hidden" onclick="handleOverlay(event,'modal-reset-all')">
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-header">
-      <div class="modal-title">⚠️ 전체 누적 횟수 초기화</div>
+      <div class="modal-title">⚠️ 전체 학생 집계 재시작</div>
       <button class="modal-close" onclick="closeModal('modal-reset-all')">✕</button>
     </div>
-    <div class="modal-sub">전체 학생의 누적 지적 횟수를 초기화합니다</div>
-    <div style="background:var(--danger-p);border-radius:12px;padding:14px 16px;margin-bottom:16px">
-      <div style="font-size:14px;font-weight:700;color:var(--danger);margin-bottom:6px">⚠️ 매우 위험한 작업입니다</div>
-      <div style="font-size:13px;color:var(--danger);line-height:1.7;opacity:.85">
-        · <b>전체 학생</b>의 지적 횟수가 0으로 초기화됩니다<br>
-        · 봉사 완료 횟수도 모두 0으로 초기화됩니다<br>
-        · 위반 기록 원본 데이터는 삭제되지 않습니다<br>
-        · 이 작업은 되돌릴 수 없습니다
+    <div class="modal-sub">모든 학생의 집계 기준점을 현재 시점으로 변경합니다</div>
+    <div style="background:var(--warning-p);border-radius:12px;padding:14px 16px;margin-bottom:16px">
+      <div style="font-size:14px;font-weight:700;color:var(--warning);margin-bottom:6px">전체 학생에게 적용됩니다</div>
+      <div style="font-size:13px;color:var(--warning);line-height:1.7;opacity:.9">
+        · <b>전체 학생</b>의 지적 횟수와 봉사 완료 횟수를 0부터 다시 집계합니다<br>
+        · 기존 위반 기록은 삭제되지 않고 그대로 보존됩니다<br>
+        · 재시작 이후 등록된 기록부터 새 집계에 반영됩니다
       </div>
     </div>
-    <button class="btn btn-danger" id="reset-all-confirm-btn" onclick="executeResetAll()">최종 확인 — 전체 초기화</button>
+    <button class="btn btn-warning" id="reset-all-confirm-btn" onclick="executeResetAll()">확인 — 전체 학생 집계 재시작</button>
     <button class="btn btn-ghost" style="margin-top:8px" onclick="closeModal('modal-reset-all')">취소</button>
   </div>
 </div>
 
-<!-- ══ MODAL: 완전 삭제 (학생 1명) ══ -->
+<!-- ══ MODAL: 기록 영구 삭제 (학생 1명) ══ -->
 <div id="modal-hard-delete" class="modal-overlay hidden" onclick="handleOverlay(event,'modal-hard-delete')">
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-header">
-      <div class="modal-title">🗑️ 기록 완전 삭제</div>
+      <div class="modal-title">🗑️ 이 학생의 기록 영구 삭제</div>
       <button class="modal-close" onclick="closeModal('modal-hard-delete')">✕</button>
     </div>
     <div class="modal-sub" id="hard-delete-info"></div>
     <div style="background:var(--danger-p);border-radius:12px;padding:14px 16px;margin-bottom:16px">
-      <div style="font-size:14px;font-weight:700;color:var(--danger);margin-bottom:6px">🗑️ 영구 삭제 — 복구 불가</div>
+      <div style="font-size:14px;font-weight:700;color:var(--danger);margin-bottom:6px">🗑️ 원본 기록 삭제 — 복구 불가</div>
       <div style="font-size:13px;color:var(--danger);line-height:1.7;opacity:.85">
         · 해당 학생의 <b>모든 위반 기록</b>이 DB에서 영구 삭제됩니다<br>
         · 통계 데이터도 완전히 삭제됩니다<br>
@@ -1056,17 +1055,17 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
         · 이 기능은 관리자만 사용 가능합니다
       </div>
     </div>
-    <button class="btn btn-danger" id="hard-delete-confirm-btn" onclick="executeHardDelete()">최종 확인 — 완전 삭제</button>
+    <button class="btn btn-danger" id="hard-delete-confirm-btn" onclick="executeHardDelete()">확인 — 이 학생 기록 영구 삭제</button>
     <button class="btn btn-ghost" style="margin-top:8px" onclick="closeModal('modal-hard-delete');openStudentDetail(hardDeleteTargetId)">취소</button>
   </div>
 </div>
 
-<!-- ══ MODAL: 전체 완전 삭제 ══ -->
+<!-- ══ MODAL: 전체 학생 기록 영구 삭제 ══ -->
 <div id="modal-hard-delete-all" class="modal-overlay hidden" onclick="handleOverlay(event,'modal-hard-delete-all')">
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-header">
-      <div class="modal-title">🗑️ 전체 기록 완전 삭제</div>
+      <div class="modal-title">🗑️ 전체 학생 기록 영구 삭제</div>
       <button class="modal-close" onclick="closeModal('modal-hard-delete-all')">✕</button>
     </div>
     <div class="modal-sub">전체 학생의 모든 위반 기록을 DB에서 영구 삭제합니다</div>
@@ -1076,10 +1075,10 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
         · <b>전체 학생</b>의 모든 위반 기록이 DB에서 영구 삭제됩니다<br>
         · 모든 통계 데이터도 완전히 삭제됩니다<br>
         · 삭제 후 어떠한 방법으로도 복구할 수 없습니다<br>
-        · 학기 초·연도 초 완전 초기화 시에만 사용하세요
+        · 새 학기·새 학년도에 기존 기록을 폐기할 때만 사용하세요
       </div>
     </div>
-    <button class="btn btn-danger" id="hard-delete-all-btn" onclick="executeHardDeleteAll()">최종 확인 — 전체 완전 삭제</button>
+    <button class="btn btn-danger" id="hard-delete-all-btn" onclick="executeHardDeleteAll()">확인 — 전체 학생 기록 영구 삭제</button>
     <button class="btn btn-ghost" style="margin-top:8px" onclick="closeModal('modal-hard-delete-all')">취소</button>
   </div>
 </div>
@@ -1393,7 +1392,7 @@ function initTeacherScreen(){
   if(currentUserData.role==='admin'){
     document.getElementById('d-tnav-admin').style.display='flex';
     document.getElementById('tnav-admin').style.display='flex';
-    // 관리자만 완전 삭제 버튼 표시
+    // 관리자만 기록 영구 삭제 버튼 표시
     const hd = document.getElementById('admin-hard-delete-btn');
     const hdm = document.getElementById('admin-hard-delete-btn-m');
     if(hd) hd.style.display='inline';
@@ -1617,7 +1616,7 @@ async function loadMyRecords(){
     .filter(d=>{
       const v=d.data();
       if(v.date!==today || v.deleted!==false) return false;
-      // 초기화 이후 기록만 표시 (선입견 방지)
+      // 집계 재시작 이후 기록만 표시 (선입견 방지)
       const st=allStats[v.studentId];
       if(st?.lastResetAt){
         const vTime=v.timestamp?.toMillis?.()||0;
@@ -1755,8 +1754,8 @@ async function openStudentDetail(sid){
       <button class="btn btn-primary btn-sm" onclick="openViolationFromDetail('${sid}')">지적 입력</button>
       <button class="btn btn-purple btn-sm" onclick="assignExtraService()">봉사 부여</button>
       ${ns?`<button class="btn btn-success btn-sm" onclick="completeService()">봉사 완료</button>`:''}
-      <button class="btn btn-warning btn-sm" onclick="confirmResetStudent('${sid}','${s.name}')">횟수 초기화</button>
-      ${isAdmin?`<button class="btn btn-danger btn-sm" onclick="confirmHardDeleteStudent('${sid}','${s.name}')">완전 삭제</button>`:''}
+      <button class="btn btn-warning btn-sm" onclick="confirmResetStudent('${sid}','${s.name}')">집계 재시작</button>
+      ${isAdmin?`<button class="btn btn-danger btn-sm" onclick="confirmHardDeleteStudent('${sid}','${s.name}')">기록 영구 삭제</button>`:''}
     </div>`;
 
   // 위반 기록 로드 (단일 조건)
@@ -1800,20 +1799,20 @@ async function openStudentDetail(sid){
   } else if(resetTime===0){
     listEl.innerHTML=allVDocs.map(d=>renderVioItem(d,sid)).join('');
   } else {
-    // 초기화 이후 기록
+    // 집계 재시작 이후 기록
     const afterHtml = afterReset.length>0
       ? afterReset.map(d=>renderVioItem(d,sid)).join('')
-      : '<div style="color:var(--g400);font-size:12px;padding:8px 0">초기화 이후 기록 없음</div>';
-    // 초기화 이전 기록 (접혀있는 섹션)
+      : '<div style="color:var(--g400);font-size:12px;padding:8px 0">집계 재시작 이후 기록 없음</div>';
+    // 집계 재시작 이전 기록 (접혀있는 섹션)
     const beforeHtml = beforeReset.length>0
       ? `<details style="margin-top:4px">
           <summary style="font-size:12px;font-weight:700;color:var(--g400);cursor:pointer;padding:6px 0;list-style:none;display:flex;align-items:center;gap:6px">
-            <span>▶</span> 초기화 이전 기록 ${beforeReset.length}건 보기
+            <span>▶</span> 집계 재시작 이전 기록 ${beforeReset.length}건 보기
           </summary>
           <div style="margin-top:8px;opacity:.7">${beforeReset.map(d=>renderVioItem(d,sid)).join('')}</div>
         </details>` : '';
     listEl.innerHTML=`
-      <div style="font-size:11px;font-weight:700;color:var(--primary);letter-spacing:.4px;text-transform:uppercase;margin-bottom:8px">초기화 이후</div>
+      <div style="font-size:11px;font-weight:700;color:var(--primary);letter-spacing:.4px;text-transform:uppercase;margin-bottom:8px">집계 재시작 이후</div>
       ${afterHtml}
       ${beforeHtml}`;
   }
@@ -1845,7 +1844,7 @@ async function teacherDeleteVio(vid,sid){
 }
 
 // ═══════════════════════════════════════
-// 완전 삭제 (관리자 전용) - 기록 영구 삭제
+// 기록 영구 삭제 (관리자 전용)
 // ═══════════════════════════════════════
 let hardDeleteTargetId = null, hardDeleteTargetName = null;
 
@@ -1876,16 +1875,16 @@ async function executeHardDelete(){
     await db.collection('studentStats').doc(hardDeleteTargetId).delete();
     closeModal('modal-hard-delete');
     await loadStats();
-    alert(`✅ ${hardDeleteTargetName} 학생의 모든 기록이 완전히 삭제됐습니다.`);
+    alert(`✅ ${hardDeleteTargetName} 학생의 모든 기록이 영구 삭제됐습니다.`);
   }catch(e){
     alert('오류: '+e.message);
-    btn.textContent = '최종 확인 — 완전 삭제';
+    btn.textContent = '확인 — 이 학생 기록 영구 삭제';
     btn.disabled = false;
   }
   hardDeleteTargetId = null; hardDeleteTargetName = null;
 }
 
-// 전체 완전 삭제 (관리자)
+// 전체 학생 기록 영구 삭제 (관리자)
 function confirmHardDeleteAll(){
   openModal('modal-hard-delete-all');
 }
@@ -1911,16 +1910,16 @@ async function executeHardDeleteAll(){
     }
     closeModal('modal-hard-delete-all');
     await loadStats();
-    alert('✅ 전체 학생의 모든 기록이 완전히 삭제됐습니다.');
+    alert('✅ 전체 학생의 모든 기록이 영구 삭제됐습니다.');
   }catch(e){
     alert('오류: '+e.message);
-    btn.textContent = '최종 확인 — 전체 완전 삭제';
+    btn.textContent = '확인 — 전체 학생 기록 영구 삭제';
     btn.disabled = false;
   }
 }
 
 // ═══════════════════════════════════════
-// 누적 횟수 초기화
+// 학생별 집계 재시작
 // ═══════════════════════════════════════
 let resetTargetId = null;
 let resetTargetName = null;
@@ -1929,7 +1928,7 @@ function confirmResetStudent(sid, sname) {
   resetTargetId = sid;
   resetTargetName = sname;
   document.getElementById('reset-info').textContent =
-    `${sname} 학생의 누적 지적 횟수와 봉사 완료 횟수를 초기화합니다.`;
+    `${sname} 학생의 기존 기록을 보존하고 집계를 0부터 다시 시작합니다.`;
   closeModal('modal-detail');
   openModal('modal-reset');
 }
@@ -1937,7 +1936,7 @@ function confirmResetStudent(sid, sname) {
 async function executeReset() {
   if (!resetTargetId) return;
   const btn = document.getElementById('reset-confirm-btn');
-  btn.textContent = '초기화 중...';
+  btn.textContent = '집계 재시작 중...';
   btn.disabled = true;
   try {
     // 통계 초기화 (위반 기록 원본은 보존, lastResetAt 기록)
@@ -1954,8 +1953,8 @@ async function executeReset() {
     await db.collection('violations').add({
       studentId: resetTargetId,
       studentName: resetTargetName,
-      reason: '누적 횟수 초기화',
-      reasonDetail: `관리자 초기화 (${currentUserData.name})`,
+      reason: '집계 재시작',
+      reasonDetail: `관리자 집계 재시작 (${currentUserData.name})`,
       date: getToday(),
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       reportedBy: currentUser.uid,
@@ -1968,11 +1967,11 @@ async function executeReset() {
 
     closeModal('modal-reset');
     await loadStats();
-    alert(`✅ ${resetTargetName} 학생의 누적 횟수가 초기화됐습니다.`);
+    alert(`✅ ${resetTargetName} 학생의 집계를 0부터 다시 시작했습니다.`);
     openStudentDetail(resetTargetId);
   } catch(e) {
     alert('오류: ' + e.message);
-    btn.textContent = '최종 확인 — 초기화 진행';
+    btn.textContent = '확인 — 이 학생 집계 재시작';
     btn.disabled = false;
   }
   resetTargetId = null;
@@ -2017,7 +2016,7 @@ async function saveEditVio(){
 }
 
 // ═══════════════════════════════════════
-// 전체 학생 초기화 (교사/관리자)
+// 전체 학생 집계 재시작 (교사/관리자)
 // ═══════════════════════════════════════
 function confirmResetAll(){
   openModal('modal-reset-all');
@@ -2025,7 +2024,7 @@ function confirmResetAll(){
 
 async function executeResetAll(){
   const btn=document.getElementById('reset-all-confirm-btn');
-  btn.textContent='초기화 중...'; btn.disabled=true;
+  btn.textContent='집계 재시작 중...'; btn.disabled=true;
   try{
     // 모든 studentStats 문서 초기화
     const snap=await db.collection('studentStats').get();
@@ -2041,18 +2040,18 @@ async function executeResetAll(){
     // 초기화 이력 기록
     await db.collection('violations').add({
       studentId:'ALL', studentName:'전체 학생',
-      reason:'전체 누적 횟수 초기화',
-      reasonDetail:`관리자 전체 초기화 (${currentUserData.name})`,
+      reason:'전체 학생 집계 재시작',
+      reasonDetail:`관리자 전체 학생 집계 재시작 (${currentUserData.name})`,
       date:getToday(), timestamp:firebase.firestore.FieldValue.serverTimestamp(),
       reportedBy:currentUser.uid, reportedByName:currentUserData.name,
       counted:false, deleted:false, isExtraService:true, editLog:[]
     });
     closeModal('modal-reset-all');
     await loadStats();
-    alert('✅ 전체 학생의 누적 횟수가 초기화됐습니다.');
+    alert('✅ 전체 학생의 집계를 0부터 다시 시작했습니다.');
   }catch(e){
     alert('오류: '+e.message);
-    btn.textContent='최종 확인 — 전체 초기화';
+    btn.textContent='확인 — 전체 학생 집계 재시작';
     btn.disabled=false;
   }
 }
@@ -2121,7 +2120,7 @@ async function loadAdminPage(){
         <div class="user-email">${u.email}</div>
       </div>
       ${!isSelf?`<div class="user-action-btns">
-        <button class="btn btn-warning btn-xs" onclick="adminResetPassword('${d.id}','${u.name}','${u.email}')">비번 초기화</button>
+        <button class="btn btn-warning btn-xs" onclick="adminResetPassword('${d.id}','${u.name}','${u.email}')">재설정 링크 발송</button>
         <button class="btn btn-ghost btn-xs" onclick="deactivateUser('${d.id}')">비활성화</button>
       </div>`:''}
     </div>`;}).join('');
@@ -2439,7 +2438,7 @@ function changeMyPasswordM(){ changeMyPassword(); }
 // 비밀번호 재설정 이메일을 발송합니다
 // ═══════════════════════════════════════
 async function adminResetPassword(uid, name, email){
-  if(!confirm(`${name} 계정(${email})의 비밀번호를 초기화하시겠습니까?\n\n해당 계정으로 비밀번호 재설정 링크가 이메일로 발송됩니다.`)) return;
+  if(!confirm(`${name} 계정(${email})으로 비밀번호 재설정 링크를 발송하시겠습니까?\n\n사용자가 이메일의 링크를 통해 새 비밀번호를 직접 설정합니다.`)) return;
   try{
     await auth.sendPasswordResetEmail(email);
     alert(`✅ ${name}(${email})에게 비밀번호 재설정 링크를 발송했습니다.\n\n해당 사용자가 이메일의 링크를 클릭하면 새 비밀번호로 설정할 수 있습니다.`);

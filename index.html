@@ -118,11 +118,12 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
 .modal-sub{font-size:13px;color:var(--g400);margin-bottom:16px}
 
 /* ── REASON GRID ── */
-.reason-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0 16px}
-.reason-btn{padding:16px 12px;border:2px solid var(--g200);border-radius:12px;background:white;font-size:14px;font-weight:700;cursor:pointer;text-align:center;color:var(--g700);font-family:inherit;transition:all .15s;line-height:1.4}
+.reason-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:10px 0 16px}
+.reason-btn{min-height:72px;padding:12px 8px;border:2px solid var(--g200);border-radius:12px;background:white;font-size:13px;font-weight:700;cursor:pointer;text-align:center;color:var(--g700);font-family:inherit;transition:all .15s;line-height:1.35;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;word-break:keep-all}
+.reason-icon{font-size:21px;line-height:1}
 .reason-btn.selected{border-color:var(--primary);background:var(--primary-p);color:var(--primary)}
 .reason-btn:active{transform:scale(.97)}
-.reason-btn.full{grid-column:span 2;padding:13px}
+.reason-btn.full{grid-column:span 2;min-height:54px;flex-direction:row}
 
 /* ── 정렬 버튼 ── */
 .sort-bar{display:flex;align-items:center;gap:8px;padding:0 16px 10px;flex-shrink:0}
@@ -141,7 +142,7 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
 }
 .scroll-top-btn.visible{display:flex}
 .scroll-top-btn:active{transform:scale(.92)}
-@media(min-width:768px){
+@media(min-width:1024px){
   .scroll-top-btn{bottom:24px;right:28px}
   .sort-bar{padding:0 0 12px}
 }
@@ -202,10 +203,19 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
 .chip-row::-webkit-scrollbar{display:none}
 .chip{padding:7px 14px;border:2px solid var(--g200);background:white;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;color:var(--g500);font-family:inherit;transition:all .15s;flex-shrink:0}
 .chip.active{border-color:var(--primary);color:var(--primary);background:var(--primary-p)}
-/* 정렬 토글 */
-.sort-toggle{display:flex;background:var(--g100);border-radius:10px;padding:3px;gap:3px;flex-shrink:0}
-.sort-btn{padding:6px 12px;border:none;background:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;color:var(--g500);font-family:inherit;transition:all .2s;white-space:nowrap}
-.sort-btn.active{background:white;color:var(--primary);box-shadow:0 1px 4px rgba(0,0,0,.1)}
+/* 학생 검색 필터 */
+.student-filter-card{background:white;border:1px solid var(--g200);border-radius:16px;margin:12px 16px 14px;padding:14px;box-shadow:var(--sh)}
+.student-search-toolbar{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.student-search-toolbar .search-wrap{padding:0;flex:1;margin:0}
+.student-search-toolbar .search-icon{left:13px}
+.student-search-toolbar .sort-bar{padding:0;margin:0}
+.filter-groups{display:grid;gap:10px}
+.filter-group{display:grid;grid-template-columns:42px 1fr;align-items:center;gap:8px}
+.filter-label{font-size:12px;font-weight:800;color:var(--g500)}
+.filter-options{display:flex;gap:6px;flex-wrap:wrap}
+.filter-option{min-width:44px;padding:7px 9px;border:1.5px solid var(--g200);background:white;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;color:var(--g500);font-family:inherit;transition:all .15s;white-space:nowrap}
+.filter-option:hover{border-color:var(--g300);background:var(--g50)}
+.filter-option.active{border-color:var(--primary);background:var(--primary);color:white;box-shadow:0 3px 8px rgba(30,64,175,.18)}
 /* 스크롤 탑 버튼 */
 .scroll-top-btn{
   position:fixed;bottom:84px;right:16px;
@@ -218,7 +228,7 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
 }
 .scroll-top-btn.visible{display:flex}
 .scroll-top-btn:active{transform:scale(.92)}
-@media(min-width:768px){
+@media(min-width:1024px){
   .scroll-top-btn{bottom:24px;right:24px}
 }
 
@@ -258,9 +268,9 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
 .detail-actions{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
 
 /* ═══════════════════════════════════════
-   DESKTOP LAYOUT (768px+)
+   DESKTOP LAYOUT (1024px+)
 ═══════════════════════════════════════ */
-@media(min-width:768px){
+@media(min-width:1024px){
 
   /* 모바일 UI 숨기기 */
   .mobile-header{display:none !important}
@@ -281,7 +291,7 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
 
   /* ── 사이드바 ── */
   .desktop-sidebar{
-    width:256px;
+    width:clamp(224px,20vw,256px);
     flex-shrink:0;
     background:var(--g900);
     display:flex;
@@ -342,7 +352,7 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
   .desktop-header{
     background:white;
     border-bottom:1px solid var(--g200);
-    padding:16px 32px;
+    padding:16px clamp(24px,3vw,40px);
     display:flex;
     align-items:center;
     justify-content:space-between;
@@ -357,9 +367,11 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
   .desktop-content{
     flex:1;
     overflow-y:auto;
-    padding:28px 32px;
+    padding:clamp(24px,2.5vw,36px);
     background:var(--g50);
   }
+  /* 모든 데스크탑 콘텐츠가 동일한 세로 기준선과 최대 폭을 공유하도록 고정 */
+  .desktop-content>*{width:100%;max-width:1440px;box-sizing:border-box;margin-left:auto;margin-right:auto}
 
   /* 페이지 타이틀 */
   .page-title{font-size:20px;font-weight:800;color:var(--g900);letter-spacing:-.4px;margin-bottom:20px}
@@ -390,6 +402,11 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
   .desktop-search-row .search-icon{left:13px;top:50%;transform:translateY(-50%)}
   .chip-row{padding:0;margin-bottom:16px}
   .search-wrap{padding:0;margin-bottom:0}
+  .student-filter-card{width:100%;margin:0 auto 18px;padding:16px 18px}
+  .student-search-toolbar{margin-bottom:14px}
+  .filter-groups{grid-template-columns:1fr 1fr;gap:18px}
+  .filter-group{grid-template-columns:44px 1fr}
+  .filter-option{min-width:58px;padding:8px 14px;font-size:13px}
 
   /* 학생 테이블 (데스크탑) */
   .desktop-table{
@@ -465,9 +482,22 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
   .mobile-only{display:none !important}
 }
 
-/* 태블릿 (500~767px) */
-@media(min-width:500px) and (max-width:767px){
+/* 태블릿 (600~1023px) */
+@media(min-width:600px) and (max-width:1023px){
+  .mobile-header{padding:16px 24px}
+  .mobile-content{width:100%;max-width:960px;margin:0 auto;padding:18px 20px 82px}
   .stat-grid{grid-template-columns:repeat(4,1fr)}
+  .student-filter-card{margin:0 0 16px;padding:16px 18px}
+  .student-search-toolbar{margin-bottom:14px}
+  .filter-groups{grid-template-columns:1fr 1fr;gap:18px}
+  .filter-group{grid-template-columns:44px 1fr}
+  #m-stu-list,#m-dashboard-list,#m-vio-list,#pending-list-m,#all-users-list-m{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  #m-stu-list .stu-item,#m-dashboard-list .stu-item{border:1px solid var(--g200);border-radius:14px;box-shadow:var(--sh)}
+  .modal-overlay{align-items:center;padding:24px}
+  .modal{border-radius:18px;max-width:560px;max-height:86vh;padding:26px;animation:none;box-shadow:var(--sh-lg)}
+  .modal-handle{display:none}
+  .reason-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .reason-btn.full{grid-column:span 3}
 }
 </style>
 </head>
@@ -570,16 +600,32 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
         <div id="stu-page-search">
           <!-- 데스크탑 뷰 -->
           <div class="desktop-content">
-            <div class="desktop-search-row">
-              <div class="search-wrap" style="max-width:360px">
+            <div class="student-filter-card">
+              <div class="student-search-toolbar">
+              <div class="search-wrap">
                 <span class="search-icon">🔍</span>
                 <input type="text" id="d-stu-search" class="finput" placeholder="이름으로 검색..." oninput="renderSearch()" style="padding-left:38px">
               </div>
-              <select id="d-fg" class="finput" style="width:110px" onchange="renderSearch()"><option value="">전체 학년</option><option value="1">1학년</option><option value="2">2학년</option><option value="3">3학년</option></select>
-              <select id="d-fc" class="finput" style="width:100px" onchange="renderSearch()"><option value="">전체 반</option><option value="1">1반</option><option value="2">2반</option><option value="3">3반</option><option value="4">4반</option></select>
-              <div style="display:flex;gap:6px;margin-left:auto">
+              <div class="sort-bar" style="margin-left:auto">
+                <span class="sort-label">정렬</span>
                 <button class="sort-chip active" id="d-sort-number" onclick="setSort('number')">학번순</button>
                 <button class="sort-chip" id="d-sort-count" onclick="setSort('count')">지적횟수순</button>
+              </div>
+              </div>
+              <div class="filter-groups">
+                <div class="filter-group"><span class="filter-label">학년</span><div class="filter-options">
+                  <button class="filter-option active" data-filter-type="grade" data-filter-value="" onclick="setStudentFilter('grade','')">전체</button>
+                  <button class="filter-option" data-filter-type="grade" data-filter-value="1" onclick="setStudentFilter('grade','1')">1학년</button>
+                  <button class="filter-option" data-filter-type="grade" data-filter-value="2" onclick="setStudentFilter('grade','2')">2학년</button>
+                  <button class="filter-option" data-filter-type="grade" data-filter-value="3" onclick="setStudentFilter('grade','3')">3학년</button>
+                </div></div>
+                <div class="filter-group"><span class="filter-label">반</span><div class="filter-options">
+                  <button class="filter-option active" data-filter-type="class" data-filter-value="" onclick="setStudentFilter('class','')">전체</button>
+                  <button class="filter-option" data-filter-type="class" data-filter-value="1" onclick="setStudentFilter('class','1')">1반</button>
+                  <button class="filter-option" data-filter-type="class" data-filter-value="2" onclick="setStudentFilter('class','2')">2반</button>
+                  <button class="filter-option" data-filter-type="class" data-filter-value="3" onclick="setStudentFilter('class','3')">3반</button>
+                  <button class="filter-option" data-filter-type="class" data-filter-value="4" onclick="setStudentFilter('class','4')">4반</button>
+                </div></div>
               </div>
             </div>
             <!-- 데스크탑 테이블 -->
@@ -590,29 +636,29 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
           </div>
           <!-- 모바일 뷰 -->
           <div class="mobile-only">
-            <div class="search-wrap"><span class="search-icon">🔍</span><input type="text" id="m-stu-search" class="finput" placeholder="이름으로 검색..." style="padding-left:38px" oninput="renderSearch()"></div>
-            <div class="chip-row" id="grade-chip-row">
-              <button class="chip active" id="gc-all" onclick="setGrade('',this)">전체</button>
-              <button class="chip" onclick="setGrade('1',this)">1학년</button>
-              <button class="chip" onclick="setGrade('2',this)">2학년</button>
-              <button class="chip" onclick="setGrade('3',this)">3학년</button>
-            </div>
-            <div class="chip-row" style="padding-top:0" id="class-chip-row">
-              <button class="chip active" id="cc-all" onclick="setClass('',this)">전체 반</button>
-              <button class="chip" onclick="setClass('1',this)">1반</button>
-              <button class="chip" onclick="setClass('2',this)">2반</button>
-              <button class="chip" onclick="setClass('3',this)">3반</button>
-              <button class="chip" onclick="setClass('4',this)">4반</button>
-            </div>
-            <div class="sort-bar">
-              <span class="sort-label">정렬</span>
-              <button class="sort-chip active" id="m-sort-number" onclick="setSort('number')">학번순</button>
-              <button class="sort-chip" id="m-sort-count" onclick="setSort('count')">지적횟수순</button>
-            </div>
-            <div class="chip-row" style="padding-top:0;justify-content:flex-end">
-              <div class="sort-toggle">
-                <button class="sort-btn active" id="m-stu-sort-num" onclick="setStuSort('number',this)">학번순</button>
-                <button class="sort-btn" id="m-stu-sort-vio" onclick="setStuSort('violation',this)">지적순</button>
+            <div class="student-filter-card">
+              <div class="student-search-toolbar">
+                <div class="search-wrap"><span class="search-icon">🔍</span><input type="text" id="m-stu-search" class="finput" placeholder="이름으로 검색..." style="padding-left:38px" oninput="renderSearch()"></div>
+              </div>
+              <div class="filter-groups">
+                <div class="filter-group"><span class="filter-label">학년</span><div class="filter-options">
+                  <button class="filter-option active" data-filter-type="grade" data-filter-value="" onclick="setStudentFilter('grade','')">전체</button>
+                  <button class="filter-option" data-filter-type="grade" data-filter-value="1" onclick="setStudentFilter('grade','1')">1학년</button>
+                  <button class="filter-option" data-filter-type="grade" data-filter-value="2" onclick="setStudentFilter('grade','2')">2학년</button>
+                  <button class="filter-option" data-filter-type="grade" data-filter-value="3" onclick="setStudentFilter('grade','3')">3학년</button>
+                </div></div>
+                <div class="filter-group"><span class="filter-label">반</span><div class="filter-options">
+                  <button class="filter-option active" data-filter-type="class" data-filter-value="" onclick="setStudentFilter('class','')">전체</button>
+                  <button class="filter-option" data-filter-type="class" data-filter-value="1" onclick="setStudentFilter('class','1')">1반</button>
+                  <button class="filter-option" data-filter-type="class" data-filter-value="2" onclick="setStudentFilter('class','2')">2반</button>
+                  <button class="filter-option" data-filter-type="class" data-filter-value="3" onclick="setStudentFilter('class','3')">3반</button>
+                  <button class="filter-option" data-filter-type="class" data-filter-value="4" onclick="setStudentFilter('class','4')">4반</button>
+                </div></div>
+              </div>
+              <div class="sort-bar" style="padding:12px 0 0">
+                <span class="sort-label">정렬</span>
+                <button class="sort-chip active" id="m-sort-number" onclick="setSort('number')">학번순</button>
+                <button class="sort-chip" id="m-sort-count" onclick="setSort('count')">지적횟수순</button>
               </div>
             </div>
             <div id="m-stu-list"></div>
@@ -715,9 +761,9 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
           <div class="desktop-header-sub" id="tea-dh-sub">전체 학생의 지적 현황을 확인합니다</div>
         </div>
         <div style="display:flex;gap:8px;align-items:center" id="tea-header-btns">
-          <button class="btn btn-warning btn-sm" onclick="confirmResetAll()" style="white-space:nowrap">전체 초기화</button>
+          <button class="btn btn-warning btn-sm" onclick="confirmResetAll()" style="white-space:nowrap" title="기존 기록을 보관하고 전체 학생의 새 집계를 시작합니다">새 집계 시작</button>
           <span id="admin-hard-delete-btn" style="display:none">
-            <button class="btn btn-danger btn-sm" onclick="confirmHardDeleteAll()" style="white-space:nowrap">전체 완전 삭제</button>
+            <button class="btn btn-danger btn-sm" onclick="confirmHardDeleteAll()" style="white-space:nowrap" title="전체 학생의 모든 기록을 복구할 수 없도록 삭제합니다">기록 영구 삭제</button>
           </span>
         </div>
       </div>
@@ -726,8 +772,8 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
       <div class="mobile-header">
         <div><div class="mh-title" id="tea-mh-name">선생님</div><div class="mh-sub" id="tea-mh-role">지도교사</div></div>
         <div style="display:flex;gap:8px;align-items:center">
-          <button onclick="confirmResetAll()" style="background:var(--warning);border:none;color:white;padding:6px 10px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">전체 초기화</button>
-          <span id="admin-hard-delete-btn-m" style="display:none"><button onclick="confirmHardDeleteAll()" style="background:var(--danger);border:none;color:white;padding:6px 10px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">완전 삭제</button></span>
+          <button onclick="confirmResetAll()" title="기존 기록 보관" style="background:var(--warning);border:none;color:white;padding:6px 10px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">새 집계 시작</button>
+          <span id="admin-hard-delete-btn-m" style="display:none"><button onclick="confirmHardDeleteAll()" title="복구 불가" style="background:var(--danger);border:none;color:white;padding:6px 10px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">기록 영구 삭제</button></span>
           <button class="mh-logout" onclick="doLogout()">로그아웃</button>
         </div>
       </div>
@@ -774,12 +820,6 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
               <button class="sort-chip" id="tm-sort-count" onclick="setSort('count')">지적횟수순</button>
             </div>
             <div class="search-wrap" style="padding:0 16px 10px"><input type="text" class="finput" placeholder="🔍 이름 검색..." oninput="dashSearch(this.value)"></div>
-            <div class="chip-row" style="padding-top:0;justify-content:flex-end">
-              <div class="sort-toggle">
-                <button class="sort-btn active" id="m-dash-sort-num" onclick="setDashSort('number',this)">학번순</button>
-                <button class="sort-btn" id="m-dash-sort-vio" onclick="setDashSort('violation',this)">지적순</button>
-              </div>
-            </div>
             <div id="m-dashboard-list"></div>
           </div>
         </div>
@@ -840,9 +880,10 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
             <div class="admin-grid" id="pending-list"></div>
             <div class="sec-label" style="margin-top:8px">전체 사용자</div>
             <div style="background:var(--primary-p);border-radius:10px;padding:10px 14px;margin-bottom:10px;font-size:12px;color:var(--primary);line-height:1.6">
-              🔑 <b>비번 초기화</b> 버튼을 누르면 해당 계정 이메일로 <b>비밀번호 재설정 링크</b>가 발송됩니다. 사용자가 링크를 클릭하면 새 비밀번호를 직접 설정할 수 있습니다.
+              🔑 <b>재설정 링크 발송</b> 버튼을 누르면 해당 계정 이메일로 비밀번호 재설정 링크가 발송됩니다. 사용자가 링크를 클릭하면 새 비밀번호를 직접 설정할 수 있습니다.
             </div>
             <div class="admin-grid" id="all-users-list"></div>
+            <div id="admin-student-roster-d">
             <div class="sec-label" style="margin-top:8px">학생 명단 추가</div>
             <!-- 엑셀 업로드 -->
             <div class="add-form" style="margin-bottom:12px">
@@ -869,15 +910,17 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
               <button class="btn btn-primary" onclick="addStudent()">학생 추가</button>
               <div id="add-alert" style="margin-top:8px"></div>
             </div>
+            </div>
           </div>
           <div class="mobile-only">
             <div class="sec-label">가입 승인 대기</div>
             <div id="pending-list-m"></div>
             <div class="sec-label">전체 사용자</div>
             <div style="background:var(--primary-p);border-radius:10px;padding:10px 14px;margin:0 16px 10px;font-size:12px;color:var(--primary);line-height:1.6">
-              🔑 <b>비번 초기화</b> 버튼: 해당 이메일로 재설정 링크가 발송됩니다
+              🔑 <b>재설정 링크 발송</b> 버튼: 해당 이메일로 비밀번호 재설정 링크가 발송됩니다
             </div>
             <div id="all-users-list-m"></div>
+            <div id="admin-student-roster-m">
             <div class="sec-label">학생 명단 추가</div>
             <div class="add-form" style="margin:0 16px 12px">
               <div class="add-form-title">📊 엑셀 파일로 일괄 추가</div>
@@ -901,6 +944,7 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
               <div class="add-grid21"><div class="fg" style="margin:0"><label class="flabel">번호</label><input type="number" id="add-num-m" class="finput" placeholder="1" min="1" max="50"></div><div class="fg" style="margin:0"><label class="flabel">이름</label><input type="text" id="add-sname-m" class="finput" placeholder="홍길동"></div></div>
               <button class="btn btn-primary" onclick="addStudentM()">학생 추가</button>
               <div id="add-alert-m" style="margin-top:8px"></div>
+            </div>
             </div>
           </div>
         </div>
@@ -929,11 +973,13 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
     <div id="mv-alert"></div>
     <div class="flabel">위반 사유 선택</div>
     <div class="reason-grid">
-      <button class="reason-btn" onclick="selectReason('복장불량')" id="rb-복장불량">👔<br>복장불량</button>
-      <button class="reason-btn" onclick="selectReason('두발불량')" id="rb-두발불량">✂️<br>두발불량</button>
-      <button class="reason-btn" onclick="selectReason('화장')" id="rb-화장">💄<br>화장</button>
-      <button class="reason-btn" onclick="selectReason('담배')" id="rb-담배">🚬<br>담배</button>
-      <button class="reason-btn full" onclick="selectReason('기타')" id="rb-기타">📝 기타</button>
+      <button class="reason-btn" onclick="selectReason('화장')" id="rb-화장"><span class="reason-icon">💄</span><span>화장</span></button>
+      <button class="reason-btn" onclick="selectReason('교복 불량')" id="rb-교복 불량"><span class="reason-icon">👔</span><span>교복 불량</span></button>
+      <button class="reason-btn" onclick="selectReason('슬리퍼 하교')" id="rb-슬리퍼 하교"><span class="reason-icon">🩴</span><span>슬리퍼 하교</span></button>
+      <button class="reason-btn" onclick="selectReason('체육복 하교')" id="rb-체육복 하교"><span class="reason-icon">🏃</span><span>체육복 하교</span></button>
+      <button class="reason-btn" onclick="selectReason('사복 착용')" id="rb-사복 착용"><span class="reason-icon">🧥</span><span>사복 착용</span></button>
+      <button class="reason-btn" onclick="selectReason('흡연')" id="rb-흡연"><span class="reason-icon">🚭</span><span>흡연</span></button>
+      <button class="reason-btn full" onclick="selectReason('기타')" id="rb-기타"><span class="reason-icon">📝</span><span>기타</span></button>
     </div>
     <div id="reason-detail-wrap" style="display:none" class="fg">
       <label class="flabel">기타 사유</label>
@@ -967,22 +1013,22 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-header">
-      <div class="modal-title">⚠️ 누적 횟수 초기화</div>
+      <div class="modal-title">⚠️ 이 학생의 새 집계 시작</div>
       <button class="modal-close" onclick="closeModal('modal-reset')">✕</button>
     </div>
     <div class="modal-sub" id="reset-info"></div>
-    <div style="background:var(--danger-p);border-radius:12px;padding:14px 16px;margin-bottom:18px">
-      <div style="font-size:14px;font-weight:700;color:var(--danger);margin-bottom:6px">⚠️ 주의 — 이 작업은 되돌릴 수 없습니다</div>
-      <div style="font-size:13px;color:var(--danger);line-height:1.6;opacity:.85">
-        · 지적 횟수가 0으로 초기화됩니다<br>
-        · 봉사 완료 횟수도 0으로 초기화됩니다<br>
-        · 기존 위반 기록 데이터는 삭제되지 않습니다
+    <div style="background:var(--warning-p);border-radius:12px;padding:14px 16px;margin-bottom:18px">
+      <div style="font-size:14px;font-weight:700;color:var(--warning);margin-bottom:6px">기존 기록 보관 — 오늘부터 새 집계를 시작합니다</div>
+      <div style="font-size:13px;color:var(--warning);line-height:1.6;opacity:.9">
+        · 지적 횟수와 봉사 완료 횟수를 0부터 다시 집계합니다<br>
+        · 기존 위반 기록은 삭제되지 않고 그대로 보존됩니다<br>
+        · 오늘부터 등록된 기록부터 새 집계에 반영됩니다
       </div>
     </div>
     <div style="background:var(--g50);border-radius:10px;padding:12px 14px;margin-bottom:18px;font-size:13px;color:var(--g600)">
-      초기화를 진행하려면 아래 버튼을 눌러 최종 확인해주세요.
+      기존 기록은 그대로 보관됩니다. 새 집계를 시작하려면 확인해 주세요.
     </div>
-    <button class="btn btn-danger" id="reset-confirm-btn" onclick="executeReset()">최종 확인 — 초기화 진행</button>
+    <button class="btn btn-warning" id="reset-confirm-btn" onclick="executeReset()">확인 — 새 집계 시작</button>
     <button class="btn btn-ghost" style="margin-top:8px" onclick="closeModal('modal-reset')">취소</button>
   </div>
 </div>
@@ -999,10 +1045,12 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
     <div class="fg">
       <label class="flabel">위반 사유</label>
       <select id="edit-reason" class="finput" onchange="document.getElementById('edit-detail-wrap').style.display=this.value==='기타'?'block':'none'">
-        <option value="복장불량">복장불량</option>
-        <option value="두발불량">두발불량</option>
         <option value="화장">화장</option>
-        <option value="담배">담배</option>
+        <option value="교복 불량">교복 불량</option>
+        <option value="슬리퍼 하교">슬리퍼 하교</option>
+        <option value="체육복 하교">체육복 하교</option>
+        <option value="사복 착용">사복 착용</option>
+        <option value="흡연">흡연</option>
         <option value="기타">기타</option>
       </select>
     </div>
@@ -1015,58 +1063,57 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
   </div>
 </div>
 
-<!-- ══ MODAL: 전체 초기화 확인 ══ -->
+<!-- ══ MODAL: 전체 학생 새 집계 시작 확인 ══ -->
 <div id="modal-reset-all" class="modal-overlay hidden" onclick="handleOverlay(event,'modal-reset-all')">
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-header">
-      <div class="modal-title">⚠️ 전체 누적 횟수 초기화</div>
+      <div class="modal-title">⚠️ 전체 학생의 새 집계 시작</div>
       <button class="modal-close" onclick="closeModal('modal-reset-all')">✕</button>
     </div>
-    <div class="modal-sub">전체 학생의 누적 지적 횟수를 초기화합니다</div>
-    <div style="background:var(--danger-p);border-radius:12px;padding:14px 16px;margin-bottom:16px">
-      <div style="font-size:14px;font-weight:700;color:var(--danger);margin-bottom:6px">⚠️ 매우 위험한 작업입니다</div>
-      <div style="font-size:13px;color:var(--danger);line-height:1.7;opacity:.85">
-        · <b>전체 학생</b>의 지적 횟수가 0으로 초기화됩니다<br>
-        · 봉사 완료 횟수도 모두 0으로 초기화됩니다<br>
-        · 위반 기록 원본 데이터는 삭제되지 않습니다<br>
-        · 이 작업은 되돌릴 수 없습니다
+    <div class="modal-sub">기존 기록을 보관하고 모든 학생의 새 집계를 시작합니다</div>
+    <div style="background:var(--warning-p);border-radius:12px;padding:14px 16px;margin-bottom:16px">
+      <div style="font-size:14px;font-weight:700;color:var(--warning);margin-bottom:6px">기존 기록 보관 — 전체 학생에게 적용됩니다</div>
+      <div style="font-size:13px;color:var(--warning);line-height:1.7;opacity:.9">
+        · <b>전체 학생</b>의 지적 횟수와 봉사 완료 횟수를 0부터 다시 집계합니다<br>
+        · 기존 위반 기록은 삭제되지 않고 그대로 보존됩니다<br>
+        · 오늘부터 등록된 기록부터 새 집계에 반영됩니다
       </div>
     </div>
-    <button class="btn btn-danger" id="reset-all-confirm-btn" onclick="executeResetAll()">최종 확인 — 전체 초기화</button>
+    <button class="btn btn-warning" id="reset-all-confirm-btn" onclick="executeResetAll()">확인 — 전체 학생 새 집계 시작</button>
     <button class="btn btn-ghost" style="margin-top:8px" onclick="closeModal('modal-reset-all')">취소</button>
   </div>
 </div>
 
-<!-- ══ MODAL: 완전 삭제 (학생 1명) ══ -->
+<!-- ══ MODAL: 기록 영구 삭제 (학생 1명) ══ -->
 <div id="modal-hard-delete" class="modal-overlay hidden" onclick="handleOverlay(event,'modal-hard-delete')">
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-header">
-      <div class="modal-title">🗑️ 기록 완전 삭제</div>
+      <div class="modal-title">🗑️ 이 학생의 기록 영구 삭제</div>
       <button class="modal-close" onclick="closeModal('modal-hard-delete')">✕</button>
     </div>
     <div class="modal-sub" id="hard-delete-info"></div>
     <div style="background:var(--danger-p);border-radius:12px;padding:14px 16px;margin-bottom:16px">
-      <div style="font-size:14px;font-weight:700;color:var(--danger);margin-bottom:6px">🗑️ 영구 삭제 — 복구 불가</div>
+      <div style="font-size:14px;font-weight:700;color:var(--danger);margin-bottom:6px">🗑️ 원본 기록 삭제 — 복구 불가</div>
       <div style="font-size:13px;color:var(--danger);line-height:1.7;opacity:.85">
         · 해당 학생의 <b>모든 위반 기록</b>이 DB에서 영구 삭제됩니다<br>
         · 통계 데이터도 완전히 삭제됩니다<br>
         · 삭제 후 어떠한 방법으로도 복구할 수 없습니다<br>
-        · 이 기능은 관리자만 사용 가능합니다
+        · 이 기능은 지도교사와 관리자만 사용할 수 있습니다
       </div>
     </div>
-    <button class="btn btn-danger" id="hard-delete-confirm-btn" onclick="executeHardDelete()">최종 확인 — 완전 삭제</button>
+    <button class="btn btn-danger" id="hard-delete-confirm-btn" onclick="executeHardDelete()">확인 — 이 학생 기록 영구 삭제</button>
     <button class="btn btn-ghost" style="margin-top:8px" onclick="closeModal('modal-hard-delete');openStudentDetail(hardDeleteTargetId)">취소</button>
   </div>
 </div>
 
-<!-- ══ MODAL: 전체 완전 삭제 ══ -->
+<!-- ══ MODAL: 전체 학생 기록 영구 삭제 ══ -->
 <div id="modal-hard-delete-all" class="modal-overlay hidden" onclick="handleOverlay(event,'modal-hard-delete-all')">
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-header">
-      <div class="modal-title">🗑️ 전체 기록 완전 삭제</div>
+      <div class="modal-title">🗑️ 전체 학생 기록 영구 삭제</div>
       <button class="modal-close" onclick="closeModal('modal-hard-delete-all')">✕</button>
     </div>
     <div class="modal-sub">전체 학생의 모든 위반 기록을 DB에서 영구 삭제합니다</div>
@@ -1076,10 +1123,10 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
         · <b>전체 학생</b>의 모든 위반 기록이 DB에서 영구 삭제됩니다<br>
         · 모든 통계 데이터도 완전히 삭제됩니다<br>
         · 삭제 후 어떠한 방법으로도 복구할 수 없습니다<br>
-        · 학기 초·연도 초 완전 초기화 시에만 사용하세요
+        · 새 학기·새 학년도에 기존 기록을 폐기할 때만 사용하세요
       </div>
     </div>
-    <button class="btn btn-danger" id="hard-delete-all-btn" onclick="executeHardDeleteAll()">최종 확인 — 전체 완전 삭제</button>
+    <button class="btn btn-danger" id="hard-delete-all-btn" onclick="executeHardDeleteAll()">확인 — 전체 학생 기록 영구 삭제</button>
     <button class="btn btn-ghost" style="margin-top:8px" onclick="closeModal('modal-hard-delete-all')">취소</button>
   </div>
 </div>
@@ -1132,7 +1179,7 @@ function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('screen-'+id).classList.add('active');
 }
-function isDesktop(){return window.innerWidth>=768}
+function isDesktop(){return window.innerWidth>=1024}
 
 // ═══════════════════════════════════════
 // AUTH
@@ -1390,10 +1437,16 @@ function initTeacherScreen(){
   document.getElementById('tea-sidebar-name').textContent=n;
   document.getElementById('tea-sidebar-role').textContent=r;
   document.getElementById('tea-avatar').textContent=firstChar(n);
-  if(currentUserData.role==='admin'){
+  if(['admin','teacher'].includes(currentUserData.role)){
     document.getElementById('d-tnav-admin').style.display='flex';
     document.getElementById('tnav-admin').style.display='flex';
-    // 관리자만 완전 삭제 버튼 표시
+  }
+  if(currentUserData.role==='teacher'){
+    document.getElementById('admin-student-roster-d').style.display='none';
+    document.getElementById('admin-student-roster-m').style.display='none';
+  }
+  // 지도교사와 관리자는 학생 기록을 영구 삭제할 수 있음
+  if(['admin','teacher'].includes(currentUserData.role)){
     const hd = document.getElementById('admin-hard-delete-btn');
     const hdm = document.getElementById('admin-hard-delete-btn-m');
     if(hd) hd.style.display='inline';
@@ -1448,40 +1501,20 @@ async function loadAllViolations(){
 // ═══════════════════════════════════════
 // 학생 검색 렌더링
 // ═══════════════════════════════════════
-function setGrade(v,btn){
-  const gradeChips=document.querySelectorAll('#grade-chip-row .chip');
-  if(filterGradeVal===v&&v!==''){
-    filterGradeVal='';
-    gradeChips.forEach(b=>b.classList.remove('active'));
-    document.getElementById('gc-all').classList.add('active');
-  }else{
-    filterGradeVal=v;
-    gradeChips.forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-  }
-  renderSearch();
-}
-function setClass(v,btn){
-  const classChips=document.querySelectorAll('#class-chip-row .chip');
-  if(filterClassVal===v&&v!==''){
-    filterClassVal='';
-    classChips.forEach(b=>b.classList.remove('active'));
-    document.getElementById('cc-all').classList.add('active');
-  }else{
-    filterClassVal=v;
-    classChips.forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-  }
+function setStudentFilter(type,value){
+  if(type==='grade')filterGradeVal=value;
+  if(type==='class')filterClassVal=value;
+  document.querySelectorAll(`.filter-option[data-filter-type="${type}"]`).forEach(button=>{
+    button.classList.toggle('active',button.dataset.filterValue===value);
+  });
   renderSearch();
 }
 function renderSearch(){
   const dq=(document.getElementById('d-stu-search')?.value||'').trim();
   const mq=(document.getElementById('m-stu-search')?.value||'').trim();
-  const q=dq||mq;
-  const dfg=document.getElementById('d-fg')?.value||'';
-  const dfc=document.getElementById('d-fc')?.value||'';
-  const grade=dfg||filterGradeVal;
-  const cls=dfc||filterClassVal;
+  const q=isDesktop()?dq:mq;
+  const grade=filterGradeVal;
+  const cls=filterClassVal;
   let list=[...allStudents];
   if(grade)list=list.filter(s=>String(s.grade)===grade);
   if(cls)list=list.filter(s=>String(s.class)===cls);
@@ -1617,7 +1650,7 @@ async function loadMyRecords(){
     .filter(d=>{
       const v=d.data();
       if(v.date!==today || v.deleted!==false) return false;
-      // 초기화 이후 기록만 표시 (선입견 방지)
+      // 집계 재시작 이후 기록만 표시 (선입견 방지)
       const st=allStats[v.studentId];
       if(st?.lastResetAt){
         const vTime=v.timestamp?.toMillis?.()||0;
@@ -1748,15 +1781,15 @@ async function openStudentDetail(sid){
       </div>`;
 
   // 액션 버튼 (통일된 크기)
-  const isAdmin = currentUserData.role === 'admin';
-  const btnCount = 3 + (ns?1:0) + (isAdmin?1:0);
+  const canPermanentlyDelete = ['admin','teacher'].includes(currentUserData.role);
+  const btnCount = 3 + (ns?1:0) + (canPermanentlyDelete?1:0);
   document.getElementById('md-actions').innerHTML=`
     <div class="action-btns" style="grid-template-columns:repeat(${btnCount},1fr)">
       <button class="btn btn-primary btn-sm" onclick="openViolationFromDetail('${sid}')">지적 입력</button>
       <button class="btn btn-purple btn-sm" onclick="assignExtraService()">봉사 부여</button>
       ${ns?`<button class="btn btn-success btn-sm" onclick="completeService()">봉사 완료</button>`:''}
-      <button class="btn btn-warning btn-sm" onclick="confirmResetStudent('${sid}','${s.name}')">횟수 초기화</button>
-      ${isAdmin?`<button class="btn btn-danger btn-sm" onclick="confirmHardDeleteStudent('${sid}','${s.name}')">완전 삭제</button>`:''}
+      <button class="btn btn-warning btn-sm" onclick="confirmResetStudent('${sid}','${s.name}')">새 집계 시작</button>
+      ${canPermanentlyDelete?`<button class="btn btn-danger btn-sm" onclick="confirmHardDeleteStudent('${sid}','${s.name}')">기록 영구 삭제</button>`:''}
     </div>`;
 
   // 위반 기록 로드 (단일 조건)
@@ -1800,20 +1833,20 @@ async function openStudentDetail(sid){
   } else if(resetTime===0){
     listEl.innerHTML=allVDocs.map(d=>renderVioItem(d,sid)).join('');
   } else {
-    // 초기화 이후 기록
+    // 집계 재시작 이후 기록
     const afterHtml = afterReset.length>0
       ? afterReset.map(d=>renderVioItem(d,sid)).join('')
-      : '<div style="color:var(--g400);font-size:12px;padding:8px 0">초기화 이후 기록 없음</div>';
-    // 초기화 이전 기록 (접혀있는 섹션)
+      : '<div style="color:var(--g400);font-size:12px;padding:8px 0">새 집계 시작 이후 기록 없음</div>';
+    // 집계 재시작 이전 기록 (접혀있는 섹션)
     const beforeHtml = beforeReset.length>0
       ? `<details style="margin-top:4px">
           <summary style="font-size:12px;font-weight:700;color:var(--g400);cursor:pointer;padding:6px 0;list-style:none;display:flex;align-items:center;gap:6px">
-            <span>▶</span> 초기화 이전 기록 ${beforeReset.length}건 보기
+            <span>▶</span> 새 집계 시작 이전 기록 ${beforeReset.length}건 보기
           </summary>
           <div style="margin-top:8px;opacity:.7">${beforeReset.map(d=>renderVioItem(d,sid)).join('')}</div>
         </details>` : '';
     listEl.innerHTML=`
-      <div style="font-size:11px;font-weight:700;color:var(--primary);letter-spacing:.4px;text-transform:uppercase;margin-bottom:8px">초기화 이후</div>
+      <div style="font-size:11px;font-weight:700;color:var(--primary);letter-spacing:.4px;text-transform:uppercase;margin-bottom:8px">새 집계 시작 이후</div>
       ${afterHtml}
       ${beforeHtml}`;
   }
@@ -1845,11 +1878,12 @@ async function teacherDeleteVio(vid,sid){
 }
 
 // ═══════════════════════════════════════
-// 완전 삭제 (관리자 전용) - 기록 영구 삭제
+// 기록 영구 삭제 (지도교사·관리자)
 // ═══════════════════════════════════════
 let hardDeleteTargetId = null, hardDeleteTargetName = null;
 
 function confirmHardDeleteStudent(sid, sname){
+  if(!['admin','teacher'].includes(currentUserData?.role)){alert('기록 영구 삭제 권한이 없습니다.');return;}
   hardDeleteTargetId = sid;
   hardDeleteTargetName = sname;
   document.getElementById('hard-delete-info').textContent =
@@ -1859,6 +1893,7 @@ function confirmHardDeleteStudent(sid, sname){
 }
 
 async function executeHardDelete(){
+  if(!['admin','teacher'].includes(currentUserData?.role)){alert('기록 영구 삭제 권한이 없습니다.');return;}
   if(!hardDeleteTargetId) return;
   const btn = document.getElementById('hard-delete-confirm-btn');
   btn.textContent = '삭제 중...'; btn.disabled = true;
@@ -1876,21 +1911,23 @@ async function executeHardDelete(){
     await db.collection('studentStats').doc(hardDeleteTargetId).delete();
     closeModal('modal-hard-delete');
     await loadStats();
-    alert(`✅ ${hardDeleteTargetName} 학생의 모든 기록이 완전히 삭제됐습니다.`);
+    alert(`✅ ${hardDeleteTargetName} 학생의 모든 기록이 영구 삭제됐습니다.`);
   }catch(e){
     alert('오류: '+e.message);
-    btn.textContent = '최종 확인 — 완전 삭제';
+    btn.textContent = '확인 — 이 학생 기록 영구 삭제';
     btn.disabled = false;
   }
   hardDeleteTargetId = null; hardDeleteTargetName = null;
 }
 
-// 전체 완전 삭제 (관리자)
+// 전체 학생 기록 영구 삭제 (지도교사·관리자)
 function confirmHardDeleteAll(){
+  if(!['admin','teacher'].includes(currentUserData?.role)){alert('기록 영구 삭제 권한이 없습니다.');return;}
   openModal('modal-hard-delete-all');
 }
 
 async function executeHardDeleteAll(){
+  if(!['admin','teacher'].includes(currentUserData?.role)){alert('기록 영구 삭제 권한이 없습니다.');return;}
   const btn = document.getElementById('hard-delete-all-btn');
   btn.textContent = '삭제 중...'; btn.disabled = true;
   try{
@@ -1911,16 +1948,16 @@ async function executeHardDeleteAll(){
     }
     closeModal('modal-hard-delete-all');
     await loadStats();
-    alert('✅ 전체 학생의 모든 기록이 완전히 삭제됐습니다.');
+    alert('✅ 전체 학생의 모든 기록이 영구 삭제됐습니다.');
   }catch(e){
     alert('오류: '+e.message);
-    btn.textContent = '최종 확인 — 전체 완전 삭제';
+    btn.textContent = '확인 — 전체 학생 기록 영구 삭제';
     btn.disabled = false;
   }
 }
 
 // ═══════════════════════════════════════
-// 누적 횟수 초기화
+// 학생별 집계 재시작
 // ═══════════════════════════════════════
 let resetTargetId = null;
 let resetTargetName = null;
@@ -1929,7 +1966,7 @@ function confirmResetStudent(sid, sname) {
   resetTargetId = sid;
   resetTargetName = sname;
   document.getElementById('reset-info').textContent =
-    `${sname} 학생의 누적 지적 횟수와 봉사 완료 횟수를 초기화합니다.`;
+    `${sname} 학생의 기존 기록을 보관하고 오늘부터 새 집계를 시작합니다.`;
   closeModal('modal-detail');
   openModal('modal-reset');
 }
@@ -1937,7 +1974,7 @@ function confirmResetStudent(sid, sname) {
 async function executeReset() {
   if (!resetTargetId) return;
   const btn = document.getElementById('reset-confirm-btn');
-  btn.textContent = '초기화 중...';
+  btn.textContent = '새 집계 시작 중...';
   btn.disabled = true;
   try {
     // 통계 초기화 (위반 기록 원본은 보존, lastResetAt 기록)
@@ -1954,8 +1991,8 @@ async function executeReset() {
     await db.collection('violations').add({
       studentId: resetTargetId,
       studentName: resetTargetName,
-      reason: '누적 횟수 초기화',
-      reasonDetail: `관리자 초기화 (${currentUserData.name})`,
+      reason: '새 집계 시작',
+      reasonDetail: `관리자 새 집계 시작 (${currentUserData.name})`,
       date: getToday(),
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       reportedBy: currentUser.uid,
@@ -1968,11 +2005,11 @@ async function executeReset() {
 
     closeModal('modal-reset');
     await loadStats();
-    alert(`✅ ${resetTargetName} 학생의 누적 횟수가 초기화됐습니다.`);
+    alert(`✅ ${resetTargetName} 학생의 새 집계를 시작했습니다.`);
     openStudentDetail(resetTargetId);
   } catch(e) {
     alert('오류: ' + e.message);
-    btn.textContent = '최종 확인 — 초기화 진행';
+    btn.textContent = '확인 — 새 집계 시작';
     btn.disabled = false;
   }
   resetTargetId = null;
@@ -1986,9 +2023,17 @@ let editVioId=null, editVioSid=null, editVioCounted=false;
 
 function editVioRecord(vid, sid, reason, detail, counted){
   editVioId=vid; editVioSid=sid; editVioCounted=(counted==='true');
-  document.getElementById('edit-reason').value=reason;
-  document.getElementById('edit-detail').value=detail;
-  document.getElementById('edit-detail-wrap').style.display=reason==='기타'?'block':'none';
+  const reasonAliases={'복장불량':'교복 불량','담배':'흡연'};
+  const reasonSelect=document.getElementById('edit-reason');
+  let normalizedReason=reasonAliases[reason]||reason;
+  let normalizedDetail=detail;
+  if(![...reasonSelect.options].some(option=>option.value===normalizedReason)){
+    normalizedReason='기타';
+    normalizedDetail=detail?`${reason} · ${detail}`:`기존 사유: ${reason}`;
+  }
+  reasonSelect.value=normalizedReason;
+  document.getElementById('edit-detail').value=normalizedDetail;
+  document.getElementById('edit-detail-wrap').style.display=normalizedReason==='기타'?'block':'none';
   closeModal('modal-detail');
   openModal('modal-edit-vio');
 }
@@ -2017,7 +2062,7 @@ async function saveEditVio(){
 }
 
 // ═══════════════════════════════════════
-// 전체 학생 초기화 (교사/관리자)
+// 전체 학생 집계 재시작 (교사/관리자)
 // ═══════════════════════════════════════
 function confirmResetAll(){
   openModal('modal-reset-all');
@@ -2025,7 +2070,7 @@ function confirmResetAll(){
 
 async function executeResetAll(){
   const btn=document.getElementById('reset-all-confirm-btn');
-  btn.textContent='초기화 중...'; btn.disabled=true;
+  btn.textContent='새 집계 시작 중...'; btn.disabled=true;
   try{
     // 모든 studentStats 문서 초기화
     const snap=await db.collection('studentStats').get();
@@ -2041,18 +2086,18 @@ async function executeResetAll(){
     // 초기화 이력 기록
     await db.collection('violations').add({
       studentId:'ALL', studentName:'전체 학생',
-      reason:'전체 누적 횟수 초기화',
-      reasonDetail:`관리자 전체 초기화 (${currentUserData.name})`,
+      reason:'전체 학생 새 집계 시작',
+      reasonDetail:`관리자 전체 학생 새 집계 시작 (${currentUserData.name})`,
       date:getToday(), timestamp:firebase.firestore.FieldValue.serverTimestamp(),
       reportedBy:currentUser.uid, reportedByName:currentUserData.name,
       counted:false, deleted:false, isExtraService:true, editLog:[]
     });
     closeModal('modal-reset-all');
     await loadStats();
-    alert('✅ 전체 학생의 누적 횟수가 초기화됐습니다.');
+    alert('✅ 전체 학생의 새 집계를 시작했습니다.');
   }catch(e){
     alert('오류: '+e.message);
-    btn.textContent='최종 확인 — 전체 초기화';
+    btn.textContent='확인 — 전체 학생 새 집계 시작';
     btn.disabled=false;
   }
 }
@@ -2096,22 +2141,38 @@ function renderViolations(){
 }
 
 // ═══════════════════════════════════════
-// 관리자 페이지
+// 계정 관리 페이지
 // ═══════════════════════════════════════
+function canManageUserAccount(targetRole){
+  const actorRole=currentUserData?.role;
+  if(actorRole==='admin')return targetRole!=='admin';
+  return actorRole==='teacher'&&targetRole==='student';
+}
+
+function accountManagementDenied(targetRole){
+  if(targetRole==='admin')return '관리자 계정은 이 화면에서 변경할 수 없습니다.';
+  if(currentUserData?.role==='teacher')return '지도교사는 학생 계정만 관리할 수 있습니다.';
+  return '계정 관리 권한이 없습니다.';
+}
+
 async function loadAdminPage(){
+  if(!['admin','teacher'].includes(currentUserData?.role))return;
+  const isTeacher=currentUserData.role==='teacher';
   const pendSnap=await db.collection('users').where('status','==','pending').get();
-  const cnt=pendSnap.size;
+  const pendingUsers=pendSnap.docs.filter(d=>!isTeacher||d.data().role==='student');
+  const cnt=pendingUsers.length;
   document.getElementById('admin-badge').style.display=cnt>0?'inline':'none';
   document.getElementById('mobile-admin-badge').style.display=cnt>0?'block':'none';
 
-  const pendHtml=pendSnap.empty
+  const pendHtml=pendingUsers.length===0
     ?'<div class="user-item" style="justify-content:center;color:var(--g400);font-size:14px;grid-column:span 2">대기 중인 신청이 없습니다</div>'
-    :pendSnap.docs.map(d=>{const u=d.data();return`<div class="user-item"><div style="flex:1"><div class="user-name">${u.name} <span class="badge ${u.role==='student'?'bdg-blue':'bdg-purple'}" style="margin-left:6px">${u.role==='student'?'선도부학생':'지도교사'}</span></div><div class="user-email">${u.email}</div>${u.grade?`<div class="user-email">${u.grade}학년 ${u.class}반</div>`:''}</div><div class="user-action-btns"><button class="btn btn-success btn-xs" onclick="approveUser('${d.id}','${u.role}')">승인</button><button class="btn btn-danger btn-xs" onclick="rejectUser('${d.id}')">거절</button></div></div>`;}).join('');
+    :pendingUsers.map(d=>{const u=d.data();return`<div class="user-item"><div style="flex:1"><div class="user-name">${u.name} <span class="badge ${u.role==='student'?'bdg-blue':'bdg-purple'}" style="margin-left:6px">${u.role==='student'?'선도부학생':'지도교사'}</span></div><div class="user-email">${u.email}</div>${u.grade?`<div class="user-email">${u.grade}학년 ${u.class}반</div>`:''}</div><div class="user-action-btns"><button class="btn btn-success btn-xs" onclick="approveUser('${d.id}','${u.role}')">승인</button><button class="btn btn-danger btn-xs" onclick="rejectUser('${d.id}')">거절</button></div></div>`;}).join('');
   const pl=document.getElementById('pending-list');if(pl)pl.innerHTML=pendHtml;
   const plm=document.getElementById('pending-list-m');if(plm)plm.innerHTML=pendHtml;
 
   const usersSnap=await db.collection('users').where('status','==','active').get();
-  const userHtml=usersSnap.docs.map(d=>{
+  const activeUsers=usersSnap.docs.filter(d=>!isTeacher||d.data().role==='student');
+  const userHtml=activeUsers.map(d=>{
     const u=d.data();const isSelf=d.id===currentUser.uid;
     const rm={admin:['관리자','bdg-danger'],teacher:['지도교사','bdg-purple'],student:['선도부학생','bdg-blue']};
     const [rl,bc]=rm[u.role]||['기타','bdg-gray'];
@@ -2120,8 +2181,8 @@ async function loadAdminPage(){
         <div class="user-name">${u.name} <span class="badge ${bc}" style="margin-left:6px">${rl}</span>${isSelf?' <span style="font-size:11px;color:var(--g400)">(나)</span>':''}</div>
         <div class="user-email">${u.email}</div>
       </div>
-      ${!isSelf?`<div class="user-action-btns">
-        <button class="btn btn-warning btn-xs" onclick="adminResetPassword('${d.id}','${u.name}','${u.email}')">비번 초기화</button>
+      ${!isSelf&&canManageUserAccount(u.role)?`<div class="user-action-btns">
+        <button class="btn btn-warning btn-xs" onclick="adminResetPassword('${d.id}','${u.name}','${u.email}')">재설정 링크 발송</button>
         <button class="btn btn-ghost btn-xs" onclick="deactivateUser('${d.id}')">비활성화</button>
       </div>`:''}
     </div>`;}).join('');
@@ -2130,14 +2191,31 @@ async function loadAdminPage(){
 }
 
 async function approveUser(uid,role){
+  const target=await db.collection('users').doc(uid).get();
+  if(!target.exists){alert('계정을 찾을 수 없습니다.');return;}
+  const targetRole=target.data().role;
+  if(!canManageUserAccount(targetRole)){alert(accountManagementDenied(targetRole));return;}
   const data={status:'active',approvedAt:firebase.firestore.FieldValue.serverTimestamp()};
-  if(role==='student'){const exp=new Date();exp.setFullYear(exp.getFullYear()+1);data.expiresAt=exp;}
-  await db.collection('users').doc(uid).update(data);alert('승인됐습니다.');loadAdminPage();
+  if(targetRole==='student'){const exp=new Date();exp.setFullYear(exp.getFullYear()+1);data.expiresAt=exp;}
+  await target.ref.update(data);alert('승인됐습니다.');loadAdminPage();
 }
-async function rejectUser(uid){if(!confirm('거절하시겠습니까?'))return;await db.collection('users').doc(uid).update({status:'rejected'});loadAdminPage();}
-async function deactivateUser(uid){if(!confirm('비활성화하시겠습니까?'))return;await db.collection('users').doc(uid).update({status:'expired'});loadAdminPage();}
+async function rejectUser(uid){
+  const target=await db.collection('users').doc(uid).get();
+  if(!target.exists){alert('계정을 찾을 수 없습니다.');return;}
+  if(!canManageUserAccount(target.data().role)){alert(accountManagementDenied(target.data().role));return;}
+  if(!confirm('거절하시겠습니까?'))return;
+  await target.ref.update({status:'rejected'});loadAdminPage();
+}
+async function deactivateUser(uid){
+  const target=await db.collection('users').doc(uid).get();
+  if(!target.exists){alert('계정을 찾을 수 없습니다.');return;}
+  if(!canManageUserAccount(target.data().role)){alert(accountManagementDenied(target.data().role));return;}
+  if(!confirm('비활성화하시겠습니까?'))return;
+  await target.ref.update({status:'expired'});loadAdminPage();
+}
 
 async function addStudent(){
+  if(currentUserData?.role!=='admin'){alert('학생 명단은 관리자만 추가할 수 있습니다.');return;}
   const grade=parseInt(document.getElementById('add-grade').value);
   const cls=parseInt(document.getElementById('add-class').value);
   const num=parseInt(document.getElementById('add-num').value);
@@ -2151,6 +2229,7 @@ async function addStudent(){
   await loadStudents();renderSearch();renderDashboard();
 }
 async function addStudentM(){
+  if(currentUserData?.role!=='admin'){alert('학생 명단은 관리자만 추가할 수 있습니다.');return;}
   const grade=parseInt(document.getElementById('add-grade-m').value);
   const cls=parseInt(document.getElementById('add-class-m').value);
   const num=parseInt(document.getElementById('add-num-m').value);
@@ -2271,6 +2350,7 @@ function handleExcelUpload(input) {
 }
 
 async function confirmExcelUpload(students, btn) {
+  if(currentUserData?.role!=='admin'){alert('학생 명단은 관리자만 추가할 수 있습니다.');return;}
   if (!students || students.length === 0) return;
   if (!confirm(`${students.length}명을 업로드하시겠습니까?`)) return;
 
@@ -2332,20 +2412,9 @@ function setSort(mode){
     b.classList.toggle('active', numMode ? isNum : !isNum);
   });
 
-  // sort-btn 동기화 (신규 토글)
-  document.querySelectorAll('.sort-btn').forEach(b=>{
-    const isNum = b.onclick?.toString().includes("'number'");
-    b.classList.toggle('active', numMode ? isNum : !isNum);
-  });
-
   renderSearch();
   renderDashboard();
 }
-
-// 학생 검색용 (sort-btn에서 호출)
-function setStuSort(mode){ setSort(mode); }
-// 현황판용 (sort-btn에서 호출)
-function setDashSort(mode){ setSort(mode); }
 
 function applySort(list){
   if(sortMode === 'count'){
@@ -2434,13 +2503,16 @@ async function changeMyPassword(){
 function changeMyPasswordM(){ changeMyPassword(); }
 
 // ═══════════════════════════════════════
-// 비밀번호 초기화 (관리자 → 특정 사용자)
+// 비밀번호 재설정 링크 발송 (관리자·지도교사 → 권한 범위 내 사용자)
 // Firebase는 클라이언트에서 타인의 비밀번호를 직접 변경할 수 없으므로
 // 비밀번호 재설정 이메일을 발송합니다
 // ═══════════════════════════════════════
 async function adminResetPassword(uid, name, email){
-  if(!confirm(`${name} 계정(${email})의 비밀번호를 초기화하시겠습니까?\n\n해당 계정으로 비밀번호 재설정 링크가 이메일로 발송됩니다.`)) return;
   try{
+    const target=await db.collection('users').doc(uid).get();
+    if(!target.exists){alert('계정을 찾을 수 없습니다.');return;}
+    if(!canManageUserAccount(target.data().role)){alert(accountManagementDenied(target.data().role));return;}
+    if(!confirm(`${name} 계정(${email})으로 비밀번호 재설정 링크를 발송하시겠습니까?\n\n사용자가 이메일의 링크를 통해 새 비밀번호를 직접 설정합니다.`)) return;
     await auth.sendPasswordResetEmail(email);
     alert(`✅ ${name}(${email})에게 비밀번호 재설정 링크를 발송했습니다.\n\n해당 사용자가 이메일의 링크를 클릭하면 새 비밀번호로 설정할 수 있습니다.`);
   }catch(e){

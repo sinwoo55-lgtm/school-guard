@@ -1052,7 +1052,7 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
         · 해당 학생의 <b>모든 위반 기록</b>이 DB에서 영구 삭제됩니다<br>
         · 통계 데이터도 완전히 삭제됩니다<br>
         · 삭제 후 어떠한 방법으로도 복구할 수 없습니다<br>
-        · 이 기능은 관리자만 사용 가능합니다
+        · 이 기능은 지도교사와 관리자만 사용할 수 있습니다
       </div>
     </div>
     <button class="btn btn-danger" id="hard-delete-confirm-btn" onclick="executeHardDelete()">확인 — 이 학생 기록 영구 삭제</button>
@@ -1392,7 +1392,9 @@ function initTeacherScreen(){
   if(currentUserData.role==='admin'){
     document.getElementById('d-tnav-admin').style.display='flex';
     document.getElementById('tnav-admin').style.display='flex';
-    // 관리자만 기록 영구 삭제 버튼 표시
+  }
+  // 지도교사와 관리자는 학생 기록을 영구 삭제할 수 있음
+  if(['admin','teacher'].includes(currentUserData.role)){
     const hd = document.getElementById('admin-hard-delete-btn');
     const hdm = document.getElementById('admin-hard-delete-btn-m');
     if(hd) hd.style.display='inline';
@@ -1747,15 +1749,15 @@ async function openStudentDetail(sid){
       </div>`;
 
   // 액션 버튼 (통일된 크기)
-  const isAdmin = currentUserData.role === 'admin';
-  const btnCount = 3 + (ns?1:0) + (isAdmin?1:0);
+  const canPermanentlyDelete = ['admin','teacher'].includes(currentUserData.role);
+  const btnCount = 3 + (ns?1:0) + (canPermanentlyDelete?1:0);
   document.getElementById('md-actions').innerHTML=`
     <div class="action-btns" style="grid-template-columns:repeat(${btnCount},1fr)">
       <button class="btn btn-primary btn-sm" onclick="openViolationFromDetail('${sid}')">지적 입력</button>
       <button class="btn btn-purple btn-sm" onclick="assignExtraService()">봉사 부여</button>
       ${ns?`<button class="btn btn-success btn-sm" onclick="completeService()">봉사 완료</button>`:''}
       <button class="btn btn-warning btn-sm" onclick="confirmResetStudent('${sid}','${s.name}')">새 집계 시작</button>
-      ${isAdmin?`<button class="btn btn-danger btn-sm" onclick="confirmHardDeleteStudent('${sid}','${s.name}')">기록 영구 삭제</button>`:''}
+      ${canPermanentlyDelete?`<button class="btn btn-danger btn-sm" onclick="confirmHardDeleteStudent('${sid}','${s.name}')">기록 영구 삭제</button>`:''}
     </div>`;
 
   // 위반 기록 로드 (단일 조건)
@@ -1844,11 +1846,12 @@ async function teacherDeleteVio(vid,sid){
 }
 
 // ═══════════════════════════════════════
-// 기록 영구 삭제 (관리자 전용)
+// 기록 영구 삭제 (지도교사·관리자)
 // ═══════════════════════════════════════
 let hardDeleteTargetId = null, hardDeleteTargetName = null;
 
 function confirmHardDeleteStudent(sid, sname){
+  if(!['admin','teacher'].includes(currentUserData?.role)){alert('기록 영구 삭제 권한이 없습니다.');return;}
   hardDeleteTargetId = sid;
   hardDeleteTargetName = sname;
   document.getElementById('hard-delete-info').textContent =
@@ -1858,6 +1861,7 @@ function confirmHardDeleteStudent(sid, sname){
 }
 
 async function executeHardDelete(){
+  if(!['admin','teacher'].includes(currentUserData?.role)){alert('기록 영구 삭제 권한이 없습니다.');return;}
   if(!hardDeleteTargetId) return;
   const btn = document.getElementById('hard-delete-confirm-btn');
   btn.textContent = '삭제 중...'; btn.disabled = true;
@@ -1884,12 +1888,14 @@ async function executeHardDelete(){
   hardDeleteTargetId = null; hardDeleteTargetName = null;
 }
 
-// 전체 학생 기록 영구 삭제 (관리자)
+// 전체 학생 기록 영구 삭제 (지도교사·관리자)
 function confirmHardDeleteAll(){
+  if(!['admin','teacher'].includes(currentUserData?.role)){alert('기록 영구 삭제 권한이 없습니다.');return;}
   openModal('modal-hard-delete-all');
 }
 
 async function executeHardDeleteAll(){
+  if(!['admin','teacher'].includes(currentUserData?.role)){alert('기록 영구 삭제 권한이 없습니다.');return;}
   const btn = document.getElementById('hard-delete-all-btn');
   btn.textContent = '삭제 중...'; btn.disabled = true;
   try{
@@ -2119,7 +2125,7 @@ async function loadAdminPage(){
         <div class="user-name">${u.name} <span class="badge ${bc}" style="margin-left:6px">${rl}</span>${isSelf?' <span style="font-size:11px;color:var(--g400)">(나)</span>':''}</div>
         <div class="user-email">${u.email}</div>
       </div>
-      ${!isSelf?`<div class="user-action-btns">
+      ${!isSelf&&u.role!=='admin'?`<div class="user-action-btns">
         <button class="btn btn-warning btn-xs" onclick="adminResetPassword('${d.id}','${u.name}','${u.email}')">재설정 링크 발송</button>
         <button class="btn btn-ghost btn-xs" onclick="deactivateUser('${d.id}')">비활성화</button>
       </div>`:''}
@@ -2129,12 +2135,27 @@ async function loadAdminPage(){
 }
 
 async function approveUser(uid,role){
+  if(role==='admin'){alert('관리자 계정은 이 화면에서 변경할 수 없습니다.');return;}
   const data={status:'active',approvedAt:firebase.firestore.FieldValue.serverTimestamp()};
   if(role==='student'){const exp=new Date();exp.setFullYear(exp.getFullYear()+1);data.expiresAt=exp;}
   await db.collection('users').doc(uid).update(data);alert('승인됐습니다.');loadAdminPage();
 }
-async function rejectUser(uid){if(!confirm('거절하시겠습니까?'))return;await db.collection('users').doc(uid).update({status:'rejected'});loadAdminPage();}
-async function deactivateUser(uid){if(!confirm('비활성화하시겠습니까?'))return;await db.collection('users').doc(uid).update({status:'expired'});loadAdminPage();}
+async function rejectUser(uid){
+  if(currentUserData?.role!=='admin'){alert('계정 관리 권한이 없습니다.');return;}
+  const target=await db.collection('users').doc(uid).get();
+  if(!target.exists){alert('계정을 찾을 수 없습니다.');return;}
+  if(target.data().role==='admin'){alert('관리자 계정은 이 화면에서 변경할 수 없습니다.');return;}
+  if(!confirm('거절하시겠습니까?'))return;
+  await target.ref.update({status:'rejected'});loadAdminPage();
+}
+async function deactivateUser(uid){
+  if(currentUserData?.role!=='admin'){alert('계정 관리 권한이 없습니다.');return;}
+  const target=await db.collection('users').doc(uid).get();
+  if(!target.exists){alert('계정을 찾을 수 없습니다.');return;}
+  if(target.data().role==='admin'){alert('관리자 계정은 비활성화할 수 없습니다.');return;}
+  if(!confirm('비활성화하시겠습니까?'))return;
+  await target.ref.update({status:'expired'});loadAdminPage();
+}
 
 async function addStudent(){
   const grade=parseInt(document.getElementById('add-grade').value);
@@ -2438,8 +2459,12 @@ function changeMyPasswordM(){ changeMyPassword(); }
 // 비밀번호 재설정 이메일을 발송합니다
 // ═══════════════════════════════════════
 async function adminResetPassword(uid, name, email){
-  if(!confirm(`${name} 계정(${email})으로 비밀번호 재설정 링크를 발송하시겠습니까?\n\n사용자가 이메일의 링크를 통해 새 비밀번호를 직접 설정합니다.`)) return;
   try{
+    if(currentUserData?.role!=='admin'){alert('계정 관리 권한이 없습니다.');return;}
+    const target=await db.collection('users').doc(uid).get();
+    if(!target.exists){alert('계정을 찾을 수 없습니다.');return;}
+    if(target.data().role==='admin'){alert('관리자 계정에는 비밀번호 재설정 링크를 발송할 수 없습니다.');return;}
+    if(!confirm(`${name} 계정(${email})으로 비밀번호 재설정 링크를 발송하시겠습니까?\n\n사용자가 이메일의 링크를 통해 새 비밀번호를 직접 설정합니다.`)) return;
     await auth.sendPasswordResetEmail(email);
     alert(`✅ ${name}(${email})에게 비밀번호 재설정 링크를 발송했습니다.\n\n해당 사용자가 이메일의 링크를 클릭하면 새 비밀번호로 설정할 수 있습니다.`);
   }catch(e){

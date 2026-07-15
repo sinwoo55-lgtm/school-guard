@@ -78,6 +78,16 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
   word-break:keep-all !important;line-height:1.3 !important;
   letter-spacing:-.1px !important;box-sizing:border-box !important;
 }
+/* 학생 상세 팝업: 아이콘·수치·동작 버튼의 시각 기준선 */
+.detail-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.detail-stat-card{background:var(--g50);border:1px solid var(--g200);border-radius:10px;padding:10px;display:flex;align-items:center;justify-content:center;gap:8px;min-height:82px}
+.detail-stat-icon{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:0 0 30px;font-size:15px;font-weight:800;line-height:1}
+.detail-stat-info{min-width:0;text-align:left}
+.detail-stat-value{font-size:22px;line-height:1;font-weight:800}
+.detail-stat-label{font-size:11px;line-height:1.25;color:var(--g400);font-weight:600;margin-top:5px;white-space:nowrap}
+.detail-action-btn{gap:6px}
+.detail-action-icon{width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 16px;font-size:14px;line-height:1;font-weight:800}
+@media(max-width:420px){.detail-stat-card{padding:8px 6px;gap:5px}.detail-stat-icon{width:26px;height:26px;flex-basis:26px;font-size:13px}.detail-stat-value{font-size:20px}.detail-stat-label{font-size:10px}}
 /* 사용자/승인 목록 버튼 */
 .user-action-btns{display:flex;gap:6px;flex-shrink:0}
 .user-action-btns .btn{margin-top:0 !important}
@@ -1769,31 +1779,30 @@ async function openStudentDetail(sid){
   // 통계 카드
   document.getElementById('md-banner').innerHTML=
     (ns?`<div class="svc-banner" style="margin-bottom:12px"><span style="font-size:18px">⚠️</span><span class="svc-banner-text" style="margin-left:8px">봉사활동이 필요합니다</span></div>`:'')
-    +`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
-        <div style="background:var(--g50);border-radius:10px;padding:10px;text-align:center;border:1px solid var(--g200)">
-          <div style="font-size:22px;font-weight:800;color:${cntColor(cnt)}">${cnt}</div>
-          <div style="font-size:11px;color:var(--g400);font-weight:600;margin-top:2px">누적 지적</div>
+    +`<div class="detail-stats">
+        <div class="detail-stat-card">
+          <span class="detail-stat-icon" style="background:var(--primary-p);color:var(--primary)">!</span>
+          <div class="detail-stat-info"><div class="detail-stat-value" style="color:${cntColor(cnt)}">${cnt}</div><div class="detail-stat-label">누적 지적</div></div>
         </div>
-        <div style="background:var(--g50);border-radius:10px;padding:10px;text-align:center;border:1px solid var(--g200)">
-          <div style="font-size:22px;font-weight:800;color:var(--success)">${done}</div>
-          <div style="font-size:11px;color:var(--g400);font-weight:600;margin-top:2px">봉사 완료</div>
+        <div class="detail-stat-card">
+          <span class="detail-stat-icon" style="background:var(--success-p);color:var(--success)">✓</span>
+          <div class="detail-stat-info"><div class="detail-stat-value" style="color:var(--success)">${done}</div><div class="detail-stat-label">봉사 완료</div></div>
         </div>
-        <div style="background:var(--g50);border-radius:10px;padding:10px;text-align:center;border:1px solid var(--g200)">
-          <div style="font-size:22px;font-weight:800;color:var(--purple)">${extra}</div>
-          <div style="font-size:11px;color:var(--g400);font-weight:600;margin-top:2px">추가 부여</div>
+        <div class="detail-stat-card">
+          <span class="detail-stat-icon" style="background:var(--purple-p);color:var(--purple)">+</span>
+          <div class="detail-stat-info"><div class="detail-stat-value" style="color:var(--purple)">${extra}</div><div class="detail-stat-label">추가 부여</div></div>
         </div>
       </div>`;
 
   // 액션 버튼 (통일된 크기)
   const canPermanentlyDelete = ['admin','teacher'].includes(currentUserData.role);
-  const btnCount = 3 + (ns?1:0) + (canPermanentlyDelete?1:0);
   document.getElementById('md-actions').innerHTML=`
-    <div class="action-btns" style="grid-template-columns:repeat(${btnCount},1fr)">
-      <button class="btn btn-primary btn-sm" onclick="openViolationFromDetail('${sid}')">지적 입력</button>
-      <button class="btn btn-purple btn-sm" onclick="assignExtraService()">봉사 부여</button>
-      ${ns?`<button class="btn btn-success btn-sm" onclick="completeService()">봉사 완료</button>`:''}
-      <button class="btn btn-warning btn-sm" onclick="confirmResetStudent('${sid}','${s.name}')">새 집계 시작</button>
-      ${canPermanentlyDelete?`<button class="btn btn-danger btn-sm" onclick="confirmHardDeleteStudent('${sid}','${s.name}')">기록 영구 삭제</button>`:''}
+    <div class="action-btns" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+      <button class="btn btn-primary btn-sm detail-action-btn" onclick="openViolationFromDetail('${sid}')"><span class="detail-action-icon">!</span>지적 입력</button>
+      <button class="btn btn-purple btn-sm detail-action-btn" onclick="assignExtraService()"><span class="detail-action-icon">+</span>봉사 부여</button>
+      ${ns?`<button class="btn btn-success btn-sm detail-action-btn" onclick="completeService()"><span class="detail-action-icon">✓</span>봉사 완료</button>`:''}
+      <button class="btn btn-warning btn-sm detail-action-btn" onclick="confirmResetStudent('${sid}','${s.name}')"><span class="detail-action-icon">↻</span>새 집계 시작</button>
+      ${canPermanentlyDelete?`<button class="btn btn-danger btn-sm detail-action-btn" onclick="confirmHardDeleteStudent('${sid}','${s.name}')"><span class="detail-action-icon">×</span>기록 영구 삭제</button>`:''}
     </div>`;
 
   // 위반 기록 로드 (단일 조건)

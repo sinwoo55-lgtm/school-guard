@@ -118,11 +118,12 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
 .modal-sub{font-size:13px;color:var(--g400);margin-bottom:16px}
 
 /* ── REASON GRID ── */
-.reason-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0 16px}
-.reason-btn{padding:16px 12px;border:2px solid var(--g200);border-radius:12px;background:white;font-size:14px;font-weight:700;cursor:pointer;text-align:center;color:var(--g700);font-family:inherit;transition:all .15s;line-height:1.4}
+.reason-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:10px 0 16px}
+.reason-btn{min-height:72px;padding:12px 8px;border:2px solid var(--g200);border-radius:12px;background:white;font-size:13px;font-weight:700;cursor:pointer;text-align:center;color:var(--g700);font-family:inherit;transition:all .15s;line-height:1.35;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;word-break:keep-all}
+.reason-icon{font-size:21px;line-height:1}
 .reason-btn.selected{border-color:var(--primary);background:var(--primary-p);color:var(--primary)}
 .reason-btn:active{transform:scale(.97)}
-.reason-btn.full{grid-column:span 2;padding:13px}
+.reason-btn.full{grid-column:span 2;min-height:54px;flex-direction:row}
 
 /* ── 정렬 버튼 ── */
 .sort-bar{display:flex;align-items:center;gap:8px;padding:0 16px 10px;flex-shrink:0}
@@ -141,7 +142,7 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
 }
 .scroll-top-btn.visible{display:flex}
 .scroll-top-btn:active{transform:scale(.92)}
-@media(min-width:768px){
+@media(min-width:1024px){
   .scroll-top-btn{bottom:24px;right:28px}
   .sort-bar{padding:0 0 12px}
 }
@@ -202,10 +203,19 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
 .chip-row::-webkit-scrollbar{display:none}
 .chip{padding:7px 14px;border:2px solid var(--g200);background:white;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;color:var(--g500);font-family:inherit;transition:all .15s;flex-shrink:0}
 .chip.active{border-color:var(--primary);color:var(--primary);background:var(--primary-p)}
-/* 정렬 토글 */
-.sort-toggle{display:flex;background:var(--g100);border-radius:10px;padding:3px;gap:3px;flex-shrink:0}
-.sort-btn{padding:6px 12px;border:none;background:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;color:var(--g500);font-family:inherit;transition:all .2s;white-space:nowrap}
-.sort-btn.active{background:white;color:var(--primary);box-shadow:0 1px 4px rgba(0,0,0,.1)}
+/* 학생 검색 필터 */
+.student-filter-card{background:white;border:1px solid var(--g200);border-radius:16px;margin:12px 16px 14px;padding:14px;box-shadow:var(--sh)}
+.student-search-toolbar{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.student-search-toolbar .search-wrap{padding:0;flex:1;margin:0}
+.student-search-toolbar .search-icon{left:13px}
+.student-search-toolbar .sort-bar{padding:0;margin:0}
+.filter-groups{display:grid;gap:10px}
+.filter-group{display:grid;grid-template-columns:42px 1fr;align-items:center;gap:8px}
+.filter-label{font-size:12px;font-weight:800;color:var(--g500)}
+.filter-options{display:flex;gap:6px;flex-wrap:wrap}
+.filter-option{min-width:44px;padding:7px 9px;border:1.5px solid var(--g200);background:white;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;color:var(--g500);font-family:inherit;transition:all .15s;white-space:nowrap}
+.filter-option:hover{border-color:var(--g300);background:var(--g50)}
+.filter-option.active{border-color:var(--primary);background:var(--primary);color:white;box-shadow:0 3px 8px rgba(30,64,175,.18)}
 /* 스크롤 탑 버튼 */
 .scroll-top-btn{
   position:fixed;bottom:84px;right:16px;
@@ -218,7 +228,7 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
 }
 .scroll-top-btn.visible{display:flex}
 .scroll-top-btn:active{transform:scale(.92)}
-@media(min-width:768px){
+@media(min-width:1024px){
   .scroll-top-btn{bottom:24px;right:24px}
 }
 
@@ -258,9 +268,9 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
 .detail-actions{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
 
 /* ═══════════════════════════════════════
-   DESKTOP LAYOUT (768px+)
+   DESKTOP LAYOUT (1024px+)
 ═══════════════════════════════════════ */
-@media(min-width:768px){
+@media(min-width:1024px){
 
   /* 모바일 UI 숨기기 */
   .mobile-header{display:none !important}
@@ -281,7 +291,7 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
 
   /* ── 사이드바 ── */
   .desktop-sidebar{
-    width:256px;
+    width:clamp(224px,20vw,256px);
     flex-shrink:0;
     background:var(--g900);
     display:flex;
@@ -342,7 +352,7 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
   .desktop-header{
     background:white;
     border-bottom:1px solid var(--g200);
-    padding:16px 32px;
+    padding:16px clamp(24px,3vw,40px);
     display:flex;
     align-items:center;
     justify-content:space-between;
@@ -357,9 +367,10 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
   .desktop-content{
     flex:1;
     overflow-y:auto;
-    padding:28px 32px;
+    padding:clamp(24px,2.5vw,36px);
     background:var(--g50);
   }
+  .desktop-content>*{max-width:1440px;margin-left:auto;margin-right:auto}
 
   /* 페이지 타이틀 */
   .page-title{font-size:20px;font-weight:800;color:var(--g900);letter-spacing:-.4px;margin-bottom:20px}
@@ -390,6 +401,11 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
   .desktop-search-row .search-icon{left:13px;top:50%;transform:translateY(-50%)}
   .chip-row{padding:0;margin-bottom:16px}
   .search-wrap{padding:0;margin-bottom:0}
+  .student-filter-card{margin:0 0 18px;padding:16px 18px}
+  .student-search-toolbar{margin-bottom:14px}
+  .filter-groups{grid-template-columns:1fr 1fr;gap:18px}
+  .filter-group{grid-template-columns:44px 1fr}
+  .filter-option{min-width:58px;padding:8px 14px;font-size:13px}
 
   /* 학생 테이블 (데스크탑) */
   .desktop-table{
@@ -465,9 +481,22 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
   .mobile-only{display:none !important}
 }
 
-/* 태블릿 (500~767px) */
-@media(min-width:500px) and (max-width:767px){
+/* 태블릿 (600~1023px) */
+@media(min-width:600px) and (max-width:1023px){
+  .mobile-header{padding:16px 24px}
+  .mobile-content{width:100%;max-width:960px;margin:0 auto;padding:18px 20px 82px}
   .stat-grid{grid-template-columns:repeat(4,1fr)}
+  .student-filter-card{margin:0 0 16px;padding:16px 18px}
+  .student-search-toolbar{margin-bottom:14px}
+  .filter-groups{grid-template-columns:1fr 1fr;gap:18px}
+  .filter-group{grid-template-columns:44px 1fr}
+  #m-stu-list,#m-dashboard-list,#m-vio-list,#pending-list-m,#all-users-list-m{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  #m-stu-list .stu-item,#m-dashboard-list .stu-item{border:1px solid var(--g200);border-radius:14px;box-shadow:var(--sh)}
+  .modal-overlay{align-items:center;padding:24px}
+  .modal{border-radius:18px;max-width:560px;max-height:86vh;padding:26px;animation:none;box-shadow:var(--sh-lg)}
+  .modal-handle{display:none}
+  .reason-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .reason-btn.full{grid-column:span 3}
 }
 </style>
 </head>
@@ -570,16 +599,32 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
         <div id="stu-page-search">
           <!-- 데스크탑 뷰 -->
           <div class="desktop-content">
-            <div class="desktop-search-row">
-              <div class="search-wrap" style="max-width:360px">
+            <div class="student-filter-card">
+              <div class="student-search-toolbar">
+              <div class="search-wrap">
                 <span class="search-icon">🔍</span>
                 <input type="text" id="d-stu-search" class="finput" placeholder="이름으로 검색..." oninput="renderSearch()" style="padding-left:38px">
               </div>
-              <select id="d-fg" class="finput" style="width:110px" onchange="renderSearch()"><option value="">전체 학년</option><option value="1">1학년</option><option value="2">2학년</option><option value="3">3학년</option></select>
-              <select id="d-fc" class="finput" style="width:100px" onchange="renderSearch()"><option value="">전체 반</option><option value="1">1반</option><option value="2">2반</option><option value="3">3반</option><option value="4">4반</option></select>
-              <div style="display:flex;gap:6px;margin-left:auto">
+              <div class="sort-bar" style="margin-left:auto">
+                <span class="sort-label">정렬</span>
                 <button class="sort-chip active" id="d-sort-number" onclick="setSort('number')">학번순</button>
                 <button class="sort-chip" id="d-sort-count" onclick="setSort('count')">지적횟수순</button>
+              </div>
+              </div>
+              <div class="filter-groups">
+                <div class="filter-group"><span class="filter-label">학년</span><div class="filter-options">
+                  <button class="filter-option active" data-filter-type="grade" data-filter-value="" onclick="setStudentFilter('grade','')">전체</button>
+                  <button class="filter-option" data-filter-type="grade" data-filter-value="1" onclick="setStudentFilter('grade','1')">1학년</button>
+                  <button class="filter-option" data-filter-type="grade" data-filter-value="2" onclick="setStudentFilter('grade','2')">2학년</button>
+                  <button class="filter-option" data-filter-type="grade" data-filter-value="3" onclick="setStudentFilter('grade','3')">3학년</button>
+                </div></div>
+                <div class="filter-group"><span class="filter-label">반</span><div class="filter-options">
+                  <button class="filter-option active" data-filter-type="class" data-filter-value="" onclick="setStudentFilter('class','')">전체</button>
+                  <button class="filter-option" data-filter-type="class" data-filter-value="1" onclick="setStudentFilter('class','1')">1반</button>
+                  <button class="filter-option" data-filter-type="class" data-filter-value="2" onclick="setStudentFilter('class','2')">2반</button>
+                  <button class="filter-option" data-filter-type="class" data-filter-value="3" onclick="setStudentFilter('class','3')">3반</button>
+                  <button class="filter-option" data-filter-type="class" data-filter-value="4" onclick="setStudentFilter('class','4')">4반</button>
+                </div></div>
               </div>
             </div>
             <!-- 데스크탑 테이블 -->
@@ -590,29 +635,29 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
           </div>
           <!-- 모바일 뷰 -->
           <div class="mobile-only">
-            <div class="search-wrap"><span class="search-icon">🔍</span><input type="text" id="m-stu-search" class="finput" placeholder="이름으로 검색..." style="padding-left:38px" oninput="renderSearch()"></div>
-            <div class="chip-row" id="grade-chip-row">
-              <button class="chip active" id="gc-all" onclick="setGrade('',this)">전체</button>
-              <button class="chip" onclick="setGrade('1',this)">1학년</button>
-              <button class="chip" onclick="setGrade('2',this)">2학년</button>
-              <button class="chip" onclick="setGrade('3',this)">3학년</button>
-            </div>
-            <div class="chip-row" style="padding-top:0" id="class-chip-row">
-              <button class="chip active" id="cc-all" onclick="setClass('',this)">전체 반</button>
-              <button class="chip" onclick="setClass('1',this)">1반</button>
-              <button class="chip" onclick="setClass('2',this)">2반</button>
-              <button class="chip" onclick="setClass('3',this)">3반</button>
-              <button class="chip" onclick="setClass('4',this)">4반</button>
-            </div>
-            <div class="sort-bar">
-              <span class="sort-label">정렬</span>
-              <button class="sort-chip active" id="m-sort-number" onclick="setSort('number')">학번순</button>
-              <button class="sort-chip" id="m-sort-count" onclick="setSort('count')">지적횟수순</button>
-            </div>
-            <div class="chip-row" style="padding-top:0;justify-content:flex-end">
-              <div class="sort-toggle">
-                <button class="sort-btn active" id="m-stu-sort-num" onclick="setStuSort('number',this)">학번순</button>
-                <button class="sort-btn" id="m-stu-sort-vio" onclick="setStuSort('violation',this)">지적순</button>
+            <div class="student-filter-card">
+              <div class="student-search-toolbar">
+                <div class="search-wrap"><span class="search-icon">🔍</span><input type="text" id="m-stu-search" class="finput" placeholder="이름으로 검색..." style="padding-left:38px" oninput="renderSearch()"></div>
+              </div>
+              <div class="filter-groups">
+                <div class="filter-group"><span class="filter-label">학년</span><div class="filter-options">
+                  <button class="filter-option active" data-filter-type="grade" data-filter-value="" onclick="setStudentFilter('grade','')">전체</button>
+                  <button class="filter-option" data-filter-type="grade" data-filter-value="1" onclick="setStudentFilter('grade','1')">1학년</button>
+                  <button class="filter-option" data-filter-type="grade" data-filter-value="2" onclick="setStudentFilter('grade','2')">2학년</button>
+                  <button class="filter-option" data-filter-type="grade" data-filter-value="3" onclick="setStudentFilter('grade','3')">3학년</button>
+                </div></div>
+                <div class="filter-group"><span class="filter-label">반</span><div class="filter-options">
+                  <button class="filter-option active" data-filter-type="class" data-filter-value="" onclick="setStudentFilter('class','')">전체</button>
+                  <button class="filter-option" data-filter-type="class" data-filter-value="1" onclick="setStudentFilter('class','1')">1반</button>
+                  <button class="filter-option" data-filter-type="class" data-filter-value="2" onclick="setStudentFilter('class','2')">2반</button>
+                  <button class="filter-option" data-filter-type="class" data-filter-value="3" onclick="setStudentFilter('class','3')">3반</button>
+                  <button class="filter-option" data-filter-type="class" data-filter-value="4" onclick="setStudentFilter('class','4')">4반</button>
+                </div></div>
+              </div>
+              <div class="sort-bar" style="padding:12px 0 0">
+                <span class="sort-label">정렬</span>
+                <button class="sort-chip active" id="m-sort-number" onclick="setSort('number')">학번순</button>
+                <button class="sort-chip" id="m-sort-count" onclick="setSort('count')">지적횟수순</button>
               </div>
             </div>
             <div id="m-stu-list"></div>
@@ -774,12 +819,6 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
               <button class="sort-chip" id="tm-sort-count" onclick="setSort('count')">지적횟수순</button>
             </div>
             <div class="search-wrap" style="padding:0 16px 10px"><input type="text" class="finput" placeholder="🔍 이름 검색..." oninput="dashSearch(this.value)"></div>
-            <div class="chip-row" style="padding-top:0;justify-content:flex-end">
-              <div class="sort-toggle">
-                <button class="sort-btn active" id="m-dash-sort-num" onclick="setDashSort('number',this)">학번순</button>
-                <button class="sort-btn" id="m-dash-sort-vio" onclick="setDashSort('violation',this)">지적순</button>
-              </div>
-            </div>
             <div id="m-dashboard-list"></div>
           </div>
         </div>
@@ -933,11 +972,13 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
     <div id="mv-alert"></div>
     <div class="flabel">위반 사유 선택</div>
     <div class="reason-grid">
-      <button class="reason-btn" onclick="selectReason('복장불량')" id="rb-복장불량">👔<br>복장불량</button>
-      <button class="reason-btn" onclick="selectReason('두발불량')" id="rb-두발불량">✂️<br>두발불량</button>
-      <button class="reason-btn" onclick="selectReason('화장')" id="rb-화장">💄<br>화장</button>
-      <button class="reason-btn" onclick="selectReason('담배')" id="rb-담배">🚬<br>담배</button>
-      <button class="reason-btn full" onclick="selectReason('기타')" id="rb-기타">📝 기타</button>
+      <button class="reason-btn" onclick="selectReason('화장')" id="rb-화장"><span class="reason-icon">💄</span><span>화장</span></button>
+      <button class="reason-btn" onclick="selectReason('교복 불량')" id="rb-교복 불량"><span class="reason-icon">👔</span><span>교복 불량</span></button>
+      <button class="reason-btn" onclick="selectReason('슬리퍼 하교')" id="rb-슬리퍼 하교"><span class="reason-icon">🩴</span><span>슬리퍼 하교</span></button>
+      <button class="reason-btn" onclick="selectReason('체육복 하교')" id="rb-체육복 하교"><span class="reason-icon">🏃</span><span>체육복 하교</span></button>
+      <button class="reason-btn" onclick="selectReason('사복 착용')" id="rb-사복 착용"><span class="reason-icon">🧥</span><span>사복 착용</span></button>
+      <button class="reason-btn" onclick="selectReason('흡연')" id="rb-흡연"><span class="reason-icon">🚭</span><span>흡연</span></button>
+      <button class="reason-btn full" onclick="selectReason('기타')" id="rb-기타"><span class="reason-icon">📝</span><span>기타</span></button>
     </div>
     <div id="reason-detail-wrap" style="display:none" class="fg">
       <label class="flabel">기타 사유</label>
@@ -1003,10 +1044,12 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
     <div class="fg">
       <label class="flabel">위반 사유</label>
       <select id="edit-reason" class="finput" onchange="document.getElementById('edit-detail-wrap').style.display=this.value==='기타'?'block':'none'">
-        <option value="복장불량">복장불량</option>
-        <option value="두발불량">두발불량</option>
         <option value="화장">화장</option>
-        <option value="담배">담배</option>
+        <option value="교복 불량">교복 불량</option>
+        <option value="슬리퍼 하교">슬리퍼 하교</option>
+        <option value="체육복 하교">체육복 하교</option>
+        <option value="사복 착용">사복 착용</option>
+        <option value="흡연">흡연</option>
         <option value="기타">기타</option>
       </select>
     </div>
@@ -1135,7 +1178,7 @@ function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('screen-'+id).classList.add('active');
 }
-function isDesktop(){return window.innerWidth>=768}
+function isDesktop(){return window.innerWidth>=1024}
 
 // ═══════════════════════════════════════
 // AUTH
@@ -1457,40 +1500,20 @@ async function loadAllViolations(){
 // ═══════════════════════════════════════
 // 학생 검색 렌더링
 // ═══════════════════════════════════════
-function setGrade(v,btn){
-  const gradeChips=document.querySelectorAll('#grade-chip-row .chip');
-  if(filterGradeVal===v&&v!==''){
-    filterGradeVal='';
-    gradeChips.forEach(b=>b.classList.remove('active'));
-    document.getElementById('gc-all').classList.add('active');
-  }else{
-    filterGradeVal=v;
-    gradeChips.forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-  }
-  renderSearch();
-}
-function setClass(v,btn){
-  const classChips=document.querySelectorAll('#class-chip-row .chip');
-  if(filterClassVal===v&&v!==''){
-    filterClassVal='';
-    classChips.forEach(b=>b.classList.remove('active'));
-    document.getElementById('cc-all').classList.add('active');
-  }else{
-    filterClassVal=v;
-    classChips.forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-  }
+function setStudentFilter(type,value){
+  if(type==='grade')filterGradeVal=value;
+  if(type==='class')filterClassVal=value;
+  document.querySelectorAll(`.filter-option[data-filter-type="${type}"]`).forEach(button=>{
+    button.classList.toggle('active',button.dataset.filterValue===value);
+  });
   renderSearch();
 }
 function renderSearch(){
   const dq=(document.getElementById('d-stu-search')?.value||'').trim();
   const mq=(document.getElementById('m-stu-search')?.value||'').trim();
-  const q=dq||mq;
-  const dfg=document.getElementById('d-fg')?.value||'';
-  const dfc=document.getElementById('d-fc')?.value||'';
-  const grade=dfg||filterGradeVal;
-  const cls=dfc||filterClassVal;
+  const q=isDesktop()?dq:mq;
+  const grade=filterGradeVal;
+  const cls=filterClassVal;
   let list=[...allStudents];
   if(grade)list=list.filter(s=>String(s.grade)===grade);
   if(cls)list=list.filter(s=>String(s.class)===cls);
@@ -1999,9 +2022,17 @@ let editVioId=null, editVioSid=null, editVioCounted=false;
 
 function editVioRecord(vid, sid, reason, detail, counted){
   editVioId=vid; editVioSid=sid; editVioCounted=(counted==='true');
-  document.getElementById('edit-reason').value=reason;
-  document.getElementById('edit-detail').value=detail;
-  document.getElementById('edit-detail-wrap').style.display=reason==='기타'?'block':'none';
+  const reasonAliases={'복장불량':'교복 불량','담배':'흡연'};
+  const reasonSelect=document.getElementById('edit-reason');
+  let normalizedReason=reasonAliases[reason]||reason;
+  let normalizedDetail=detail;
+  if(![...reasonSelect.options].some(option=>option.value===normalizedReason)){
+    normalizedReason='기타';
+    normalizedDetail=detail?`${reason} · ${detail}`:`기존 사유: ${reason}`;
+  }
+  reasonSelect.value=normalizedReason;
+  document.getElementById('edit-detail').value=normalizedDetail;
+  document.getElementById('edit-detail-wrap').style.display=normalizedReason==='기타'?'block':'none';
   closeModal('modal-detail');
   openModal('modal-edit-vio');
 }
@@ -2380,20 +2411,9 @@ function setSort(mode){
     b.classList.toggle('active', numMode ? isNum : !isNum);
   });
 
-  // sort-btn 동기화 (신규 토글)
-  document.querySelectorAll('.sort-btn').forEach(b=>{
-    const isNum = b.onclick?.toString().includes("'number'");
-    b.classList.toggle('active', numMode ? isNum : !isNum);
-  });
-
   renderSearch();
   renderDashboard();
 }
-
-// 학생 검색용 (sort-btn에서 호출)
-function setStuSort(mode){ setSort(mode); }
-// 현황판용 (sort-btn에서 호출)
-function setDashSort(mode){ setSort(mode); }
 
 function applySort(list){
   if(sortMode === 'count'){

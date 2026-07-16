@@ -1,0 +1,7 @@
+{
+  "name": "school-guard-sync-api",
+  "private": true,
+  "type": "module",
+  "engines": { "node": "24.x" },
+  "dependencies": { "firebase-admin": "^13.0.0" }
+}

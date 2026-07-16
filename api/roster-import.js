@@ -24,9 +24,13 @@ export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed.' });
   if (!authorized(req)) return res.status(401).json({ error: 'Unauthorized.' });
-  const rows = Array.isArray(req.body?.students) ? req.body.students.map(normalize).filter(Boolean) : null;
-  if (!rows || rows.length > 2000) return res.status(400).json({ error: 'Invalid roster payload.' });
-  if (new Set(rows.map((row) => row.key)).size !== rows.length) return res.status(400).json({ error: 'Duplicate student keys.' });
+  const parsed = Array.isArray(req.body?.students) ? req.body.students.map(normalize).filter(Boolean) : null;
+  if (!parsed || parsed.length > 2000) return res.status(400).json({ error: 'Invalid roster payload.' });
+  const rows = [...parsed.reduce((unique, row) => {
+    const previous = unique.get(row.key);
+    if (!previous || (row.status !== '전출' && previous.status === '전출')) unique.set(row.key, row);
+    return unique;
+  }, new Map()).values()];
   try {
     const firestore = db(), collection = firestore.collection('students');
     const existing = await collection.get(), existingByKey = new Map(existing.docs.map((doc) => {

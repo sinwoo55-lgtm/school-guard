@@ -1472,9 +1472,7 @@ function initTeacherScreen(){
     document.getElementById('d-tnav-admin').style.display='flex';
     document.getElementById('tnav-admin').style.display='flex';
   }
-  // 지도교사와 관리자는 학생 명단을 함께 관리할 수 있음
-  document.getElementById('admin-student-roster-d').style.display='block';
-  document.getElementById('admin-student-roster-m').style.display='block';
+  // 학생 명단은 정보 허브에서만 관리하며, 이 앱에서는 안내문만 표시한다.
   // 지도교사와 관리자는 학생 기록을 영구 삭제할 수 있음
   if(['admin','teacher'].includes(currentUserData.role)){
     const hd = document.getElementById('admin-hard-delete-btn');

@@ -1505,7 +1505,7 @@ function showTeaPage(page){
 // ═══════════════════════════════════════
 async function loadStudents(){
   const snap=await db.collection('students').orderBy('grade').orderBy('class').orderBy('number').get();
-  allStudents=snap.docs.map(d=>({id:d.id,...d.data()}));
+  allStudents=snap.docs.map(d=>({id:d.id,...d.data()})).filter(student=>student.active!==false);
 }
 async function loadStats(){
   const snap=await db.collection('studentStats').get();
@@ -2254,7 +2254,7 @@ async function addStudent(){
   if(!name||!num)return showAlert('add-alert','번호와 이름을 모두 입력하세요.');
   const dup=allStudents.find(s=>s.grade===grade&&s.class===cls&&s.number===num);
   if(dup)return showAlert('add-alert',`${grade}학년 ${cls}반 ${num}번은 이미 존재합니다 (${dup.name}).`);
-  await db.collection('students').add({grade,class:cls,number:num,name});
+  await db.collection('students').add({grade,class:cls,number:num,name,active:true});
   document.getElementById('add-sname').value='';document.getElementById('add-num').value='';
   showAlert('add-alert',`✅ ${grade}학년 ${cls}반 ${num}번 ${name} 추가됐습니다.`,'success');
   await loadStudents();renderSearch();renderDashboard();
@@ -2268,7 +2268,7 @@ async function addStudentM(){
   if(!name||!num)return showAlert('add-alert-m','번호와 이름을 모두 입력하세요.');
   const dup=allStudents.find(s=>s.grade===grade&&s.class===cls&&s.number===num);
   if(dup)return showAlert('add-alert-m',`${grade}학년 ${cls}반 ${num}번은 이미 존재합니다 (${dup.name}).`);
-  await db.collection('students').add({grade,class:cls,number:num,name});
+  await db.collection('students').add({grade,class:cls,number:num,name,active:true});
   document.getElementById('add-sname-m').value='';document.getElementById('add-num-m').value='';
   showAlert('add-alert-m',`✅ ${grade}학년 ${cls}반 ${num}번 ${name} 추가됐습니다.`,'success');
   await loadStudents();renderSearch();renderDashboard();

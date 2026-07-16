@@ -889,7 +889,7 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
             </div>
             <div class="admin-grid" id="all-users-list"></div>
             <div id="admin-student-roster-d">
-            <div class="sec-label" style="margin-top:8px">학생 명단 추가</div>
+            <div class="sec-label" style="margin-top:8px">학생 명단 관리</div>
             <!-- 엑셀 업로드 -->
             <div class="add-form" style="margin-bottom:12px">
               <div class="add-form-title">📊 엑셀 파일로 일괄 추가</div>
@@ -928,7 +928,7 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
             </div>
             <div id="all-users-list-m"></div>
             <div id="admin-student-roster-m">
-            <div class="sec-label">학생 명단 추가</div>
+            <div class="sec-label">학생 명단 관리</div>
             <div class="add-form" style="margin:0 16px 12px">
               <div class="add-form-title">📊 엑셀 파일로 일괄 추가</div>
               <div style="background:var(--g50);border:2px dashed var(--g200);border-radius:10px;padding:14px;text-align:center;margin-bottom:12px">
@@ -1470,10 +1470,9 @@ function initTeacherScreen(){
     document.getElementById('d-tnav-admin').style.display='flex';
     document.getElementById('tnav-admin').style.display='flex';
   }
-  if(currentUserData.role==='teacher'){
-    document.getElementById('admin-student-roster-d').style.display='none';
-    document.getElementById('admin-student-roster-m').style.display='none';
-  }
+  // 지도교사와 관리자는 학생 명단을 함께 관리할 수 있음
+  document.getElementById('admin-student-roster-d').style.display='block';
+  document.getElementById('admin-student-roster-m').style.display='block';
   // 지도교사와 관리자는 학생 기록을 영구 삭제할 수 있음
   if(['admin','teacher'].includes(currentUserData.role)){
     const hd = document.getElementById('admin-hard-delete-btn');
@@ -2183,6 +2182,10 @@ function accountManagementDenied(targetRole){
   return '계정 관리 권한이 없습니다.';
 }
 
+function canManageStudentRoster(){
+  return ['admin','teacher'].includes(currentUserData?.role);
+}
+
 async function loadAdminPage(){
   if(!['admin','teacher'].includes(currentUserData?.role))return;
   const isTeacher=currentUserData.role==='teacher';
@@ -2243,7 +2246,7 @@ async function deactivateUser(uid){
 }
 
 async function addStudent(){
-  if(currentUserData?.role!=='admin'){alert('학생 명단은 관리자만 추가할 수 있습니다.');return;}
+  if(!canManageStudentRoster()){alert('학생 명단 관리 권한이 없습니다.');return;}
   const grade=parseInt(document.getElementById('add-grade').value);
   const cls=parseInt(document.getElementById('add-class').value);
   const num=parseInt(document.getElementById('add-num').value);
@@ -2257,7 +2260,7 @@ async function addStudent(){
   await loadStudents();renderSearch();renderDashboard();
 }
 async function addStudentM(){
-  if(currentUserData?.role!=='admin'){alert('학생 명단은 관리자만 추가할 수 있습니다.');return;}
+  if(!canManageStudentRoster()){alert('학생 명단 관리 권한이 없습니다.');return;}
   const grade=parseInt(document.getElementById('add-grade-m').value);
   const cls=parseInt(document.getElementById('add-class-m').value);
   const num=parseInt(document.getElementById('add-num-m').value);
@@ -2302,8 +2305,8 @@ function downloadStudentTemplate() {
 }
 
 function downloadCurrentStudentRoster() {
-  if (currentUserData?.role !== 'admin') {
-    alert('학생 명단 다운로드는 관리자만 사용할 수 있습니다.');
+  if (!canManageStudentRoster()) {
+    alert('학생 명단 관리 권한이 없습니다.');
     return;
   }
   if (typeof XLSX === 'undefined') {
@@ -2432,7 +2435,7 @@ function handleExcelUpload(input) {
 }
 
 async function confirmExcelUpload(students, btn) {
-  if(currentUserData?.role!=='admin'){alert('학생 명단은 관리자만 추가할 수 있습니다.');return;}
+  if(!canManageStudentRoster()){alert('학생 명단 관리 권한이 없습니다.');return;}
   if (!students || students.length === 0) return;
   if (!confirm(`${students.length}명을 업로드하시겠습니까?`)) return;
 

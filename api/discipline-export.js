@@ -18,7 +18,7 @@ function authorized(req) {
 }
 
 function value(value, length = 120) {
-  return typeof value === 'string' ? value.trim().slice(0, length) : '';
+  return typeof value === 'string' || typeof value === 'number' ? String(value).trim().slice(0, length) : '';
 }
 
 function dateValue(value) {

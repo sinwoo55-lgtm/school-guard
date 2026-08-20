@@ -27,6 +27,17 @@ function dateValue(value) {
   return '';
 }
 
+function timeValue(value) {
+  if (value?.toMillis) return value.toMillis();
+  if (value instanceof Date) return value.getTime();
+  if (typeof value === 'number') return value;
+  if (typeof value === 'string') {
+    const parsed = Date.parse(value);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+  return 0;
+}
+
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
   res.setHeader('Cache-Control', 'no-store');
@@ -36,11 +47,16 @@ export default async function handler(req, res) {
   try {
     const db = database();
     const [violations, stats] = await Promise.all([
-      db.collection('violations').where('deleted', '==', false).get(),
+      db.collection('violations').get(),
       db.collection('studentStats').get()
     ]);
+    const resetTimes = new Map(stats.docs.map((doc) => [doc.id, timeValue(doc.data().lastResetAt)]));
     const records = violations.docs.map((doc) => {
       const row = doc.data();
+      const resetAt = resetTimes.get(value(row.studentId)) || 0;
+      const recordedAt = timeValue(row.timestamp) || timeValue(row.date);
+      // 정보 허브에는 현재 집계 기간의 유효한 기록만 전달한다. 선도부에서는 이전·삭제 기록을 계속 보관한다.
+      if (row.deleted === true || (resetAt && (!recordedAt || recordedAt <= resetAt))) return null;
       return {
         id: doc.id,
         studentId: value(row.studentId), studentName: value(row.studentName, 60),
@@ -49,7 +65,7 @@ export default async function handler(req, res) {
         date: dateValue(row.date) || dateValue(row.timestamp),
         counted: row.counted === true, isExtraService: row.isExtraService === true
       };
-    }).filter((row) => row.grade && row.classNo && row.number && row.studentName);
+    }).filter((row) => row && row.grade && row.classNo && row.number && row.studentName);
     const summaries = stats.docs.map((doc) => {
       const row = doc.data();
       return {
@@ -59,7 +75,7 @@ export default async function handler(req, res) {
         serviceCompletedCount: Number(row.serviceCompletedCount) || 0,
         extraServiceOrders: Number(row.extraServiceOrders) || 0
       };
-    }).filter((row) => row.grade && row.classNo && row.number && row.studentName);
+    }).filter((row) => row.grade && row.classNo && row.number && row.studentName && row.violationCount > 0);
     return res.status(200).json({ exportedAt: new Date().toISOString(), records, summaries });
   } catch (error) {
     console.error('discipline export error', error);

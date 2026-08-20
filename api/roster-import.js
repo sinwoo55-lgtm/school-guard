@@ -33,9 +33,23 @@ export default async function handler(req, res) {
   }, new Map()).values()];
   try {
     const firestore = db(), collection = firestore.collection('students');
-    const existing = await collection.get(), existingByKey = new Map(existing.docs.map((doc) => {
-      const row = doc.data(); return [`${string(row.grade, 10)}-${string(row.class, 10)}-${string(row.number, 10)}`, doc];
-    }));
+    const existing = await collection.get(), existingGroups = new Map();
+    existing.docs.forEach((doc) => {
+      const row = doc.data(), key = `${string(row.grade, 10)}-${string(row.class, 10)}-${string(row.number, 10)}`;
+      const group = existingGroups.get(key) || [];
+      group.push(doc);
+      existingGroups.set(key, group);
+    });
+    const existingByKey = new Map(), duplicateIds = new Set();
+    existingGroups.forEach((group, key) => {
+      // 같은 학번의 과거 문서는 삭제하지 않고 비활성화한다. 가장 최근 문서를 원본 반영 대상으로 쓴다.
+      group.sort((a, b) => {
+        const aTime = a.data().updatedAt?.toMillis?.() || 0, bTime = b.data().updatedAt?.toMillis?.() || 0;
+        return bTime - aTime || a.id.localeCompare(b.id);
+      });
+      existingByKey.set(key, group[0]);
+      group.slice(1).forEach((doc) => duplicateIds.add(doc.id));
+    });
     const incoming = new Set(rows.map((row) => row.key));
     const writes = rows.map((row) => ({ row, doc: existingByKey.get(row.key) }));
     for (const part of chunks(writes)) {
@@ -45,11 +59,12 @@ export default async function handler(req, res) {
     }
     const toDeactivate = existing.docs.filter((doc) => {
       const row = doc.data(); const key = `${string(row.grade, 10)}-${string(row.class, 10)}-${string(row.number, 10)}`;
-      return row.active !== false && !incoming.has(key);
+      return row.active !== false && (duplicateIds.has(doc.id) || !incoming.has(key));
     });
+    const duplicateDeactivated = toDeactivate.filter((doc) => duplicateIds.has(doc.id)).length;
     for (const part of chunks(toDeactivate)) {
       const batch = firestore.batch(); part.forEach((doc) => batch.update(doc.ref, { active: false, updatedAt: new Date() })); await batch.commit();
     }
-    return res.status(200).json({ imported: rows.length, deactivated: toDeactivate.length });
+    return res.status(200).json({ imported: rows.length, deactivated: toDeactivate.length, duplicateDeactivated });
   } catch (error) { console.error('roster import error', error); return res.status(500).json({ error: 'Unable to import roster.' }); }
 }

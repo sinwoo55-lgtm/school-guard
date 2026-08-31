@@ -144,6 +144,11 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
 .period-filter .btn+.btn{margin-top:0}
 .period-status{min-height:18px;font-size:12px;font-weight:600;color:var(--primary);padding:0 0 10px}
 .period-status.error{color:var(--danger)}
+.period-record-panel{display:none;margin:0 0 14px;padding:14px;border:1px solid var(--g200);border-radius:12px;background:white}
+.period-record-panel.show{display:block}
+.period-record-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.period-record-head b{font-size:13px;color:var(--g700)}.period-record-count{font-size:11px;font-weight:700;color:var(--primary)}
+.period-bulk{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px;border-radius:9px;background:var(--primary-p);margin-bottom:10px;font-size:12px;color:var(--primary);font-weight:700}.period-bulk input{height:32px;padding:5px 7px;border:1px solid var(--g200);border-radius:7px;background:white;font:inherit;color:var(--g700)}.period-bulk .btn{margin:0}
+.period-records{display:grid;gap:7px;max-height:380px;overflow-y:auto;padding-right:2px}.period-record{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:11px;border:1px solid var(--g200);border-radius:9px;background:var(--g50)}.period-record.selectable{cursor:pointer}.period-record.selected{border-color:var(--primary);background:var(--primary-p);box-shadow:0 0 0 1px var(--primary)}.period-record-student{font-size:13px;font-weight:800;color:var(--g800)}.period-record-class{font-size:11px;font-weight:600;color:var(--g400);margin-left:5px}.period-record-meta{font-size:11px;color:var(--g500);margin-top:4px;line-height:1.5}.period-record-reason{font-size:12px;font-weight:700;color:var(--g700);margin-top:3px}.period-record-check{width:22px;height:22px;border:1.5px solid var(--g300);border-radius:7px;display:grid;place-items:center;color:transparent;font-size:13px;font-weight:900}.period-record.selected .period-record-check{border-color:var(--primary);background:var(--primary);color:white}.period-record-empty{padding:16px;text-align:center;font-size:12px;color:var(--g400)}
 /* ── 맨 위로 버튼 ── */
 .scroll-top-btn{
   position:fixed;bottom:84px;right:16px;z-index:80;
@@ -830,6 +835,7 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
               <button class="btn btn-ghost btn-sm period-action" onclick="clearDashPeriod()">초기화</button>
             </div>
             <div class="period-status" id="d-dash-period-status"></div>
+            <section class="period-record-panel" id="d-dash-period-records"></section>
             <!-- 데스크탑 테이블 -->
             <div class="desktop-table">
               <div class="dt-header"><div>학생</div><div>학년/반</div><div>누적 지적</div><div>봉사 완료</div><div>상태</div></div>
@@ -856,6 +862,7 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
               <button class="btn btn-ghost btn-sm period-action" onclick="clearDashPeriod()">초기화</button>
             </div>
             <div class="period-status" id="m-dash-period-status" style="padding:0 16px 10px"></div>
+            <section class="period-record-panel" id="m-dash-period-records" style="margin:0 16px 12px"></section>
             <div class="search-wrap" style="padding:0 16px 10px"><input type="text" class="finput" placeholder="🔍 이름 검색..." oninput="dashSearch(this.value)"></div>
             <div id="m-dashboard-list"></div>
           </div>
@@ -1217,7 +1224,7 @@ let allStudents=[],allStats={},allViolations=[];
 let studentsUnsubscribe=null,statsUnsubscribe=null,violationsUnsubscribe=null;
 let isSubmittingViolation=false,listRenderFrame=null;
 let dashFilter='all',dashQuery='',filterGradeVal='',filterClassVal='';
-let dashDateStart='',dashDateEnd='',dashPeriodStudentIds=null,dashPeriodRecordCount=0,dashPeriodLoading=false,dashPeriodError='',dashPeriodRequest=0;
+let dashDateStart='',dashDateEnd='',dashPeriodStudentIds=null,dashPeriodRecords=[],dashPeriodRecordCount=0,dashPeriodLoading=false,dashPeriodError='',dashPeriodRequest=0,dashSelectedPeriodRecordIds=new Set(),dashBulkDate='',dashPeriodSaving=false;
 let sortMode='number'; // 'number'=학번순, 'count'=지적횟수순
 
 // ═══════════════════════════════════════
@@ -1850,7 +1857,7 @@ function applyDashPeriod(prefix){
 }
 function clearDashPeriod(){
   dashPeriodRequest++;
-  dashPeriodStudentIds=null;dashPeriodRecordCount=0;dashPeriodLoading=false;dashPeriodError='';
+  dashPeriodStudentIds=null;dashPeriodRecords=[];dashSelectedPeriodRecordIds.clear();dashBulkDate='';dashPeriodRecordCount=0;dashPeriodLoading=false;dashPeriodError='';
   setDashDateInputs('','');
   document.querySelectorAll('[data-dash-period]').forEach(button=>button.classList.remove('active'));
   renderDashboard();
@@ -1859,18 +1866,21 @@ async function loadDashPeriod(){
   const start=dashDateStart,end=dashDateEnd;
   if(!start||!end)return clearDashPeriod();
   const request=++dashPeriodRequest;
-  dashPeriodLoading=true;dashPeriodError='';
+  dashPeriodLoading=true;dashPeriodError='';dashPeriodRecords=[];dashSelectedPeriodRecordIds.clear();dashBulkDate=end;
   renderDashboard();
   try{
     const snap=await db.collection('violations').where('date','>=',start).where('date','<=',end).get();
     if(request!==dashPeriodRequest)return;
-    const records=snap.docs.map(doc=>doc.data()).filter(record=>record.deleted===false&&!record.isExtraService&&record.studentId&&record.studentId!=='ALL');
+    const records=snap.docs.map(doc=>({id:doc.id,...doc.data()}))
+      .filter(record=>record.deleted===false&&!record.isExtraService&&record.studentId&&record.studentId!=='ALL')
+      .sort((a,b)=>String(a.date).localeCompare(String(b.date))||String(a.grade).localeCompare(String(b.grade),'ko',{numeric:true})||Number(a.class)-Number(b.class)||Number(a.number)-Number(b.number));
+    dashPeriodRecords=records;
     dashPeriodStudentIds=new Set(records.map(record=>record.studentId));
     dashPeriodRecordCount=records.length;
   }catch(error){
     if(request!==dashPeriodRequest)return;
     console.warn('dashboard period query error',error);
-    dashPeriodStudentIds=new Set();dashPeriodRecordCount=0;
+    dashPeriodStudentIds=new Set();dashPeriodRecords=[];dashSelectedPeriodRecordIds.clear();dashPeriodRecordCount=0;
     dashPeriodError='기간 지적 기록을 불러오지 못했습니다. 다시 조회해 주세요.';
   }finally{
     if(request===dashPeriodRequest){dashPeriodLoading=false;renderDashboard();}
@@ -1887,6 +1897,76 @@ function renderDashPeriodStatus(){
     status.classList.toggle('error',isError);
   });
 }
+function canManageDashPeriodDates(){return ['admin','teacher'].includes(currentUserData?.role);}
+function periodEsc(value){return String(value??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function setDashBulkDate(value){
+  dashBulkDate=value;
+  document.querySelectorAll('.dash-bulk-date').forEach(input=>{if(input.value!==value)input.value=value;});
+}
+function toggleDashPeriodRecord(id){
+  if(!canManageDashPeriodDates()||dashPeriodSaving)return;
+  if(dashSelectedPeriodRecordIds.has(id))dashSelectedPeriodRecordIds.delete(id);
+  else dashSelectedPeriodRecordIds.add(id);
+  renderDashPeriodRecords();
+}
+function renderDashPeriodRecords(){
+  const hasPeriod=dashPeriodStudentIds!==null;
+  const canEdit=canManageDashPeriodDates();
+  const selectedCount=dashSelectedPeriodRecordIds.size;
+  const safeDate=periodEsc(dashBulkDate||dashDateEnd);
+  const recordsHtml=dashPeriodLoading
+    ?'<div class="period-record-empty">지적 기록을 불러오는 중입니다...</div>'
+    :dashPeriodRecords.length
+      ?dashPeriodRecords.map(record=>{
+        const selected=dashSelectedPeriodRecordIds.has(record.id);
+        const reason=[record.reason,record.reasonDetail].filter(Boolean).map(periodEsc).join(' · ');
+        const classInfo=`${periodEsc(record.grade)}학년 ${periodEsc(record.class)}반 ${periodEsc(record.number)}번`;
+        return `<article class="period-record ${canEdit?'selectable':''} ${selected?'selected':''}"${canEdit?` onclick="toggleDashPeriodRecord('${record.id}')"`:''}>
+          <div><div class="period-record-student">${periodEsc(record.studentName)}<span class="period-record-class">${classInfo}</span></div>
+          <div class="period-record-reason">${reason||'지적 사항'}</div>
+          <div class="period-record-meta">${periodEsc(record.date)} · 입력: ${periodEsc(record.reportedByName||'입력자 미상')}</div></div>
+          ${canEdit?'<span class="period-record-check">✓</span>':''}
+        </article>`;
+      }).join('')
+      :'<div class="period-record-empty">선택한 기간에 지적 기록이 없습니다.</div>';
+  const bulkHtml=canEdit?`<div class="period-bulk"><span>선택 ${selectedCount}건</span><input class="dash-bulk-date" type="date" value="${safeDate}" onchange="setDashBulkDate(this.value)"><button class="btn btn-primary btn-sm period-action" onclick="bulkUpdateDashDates()" ${selectedCount?'':'disabled'}>${dashPeriodSaving?'변경 중...':'선택 날짜 변경'}</button></div>`:'';
+  const html=hasPeriod?`<div class="period-record-head"><b>기간 지적 기록</b><span class="period-record-count">${dashPeriodRecordCount}건</span></div>${bulkHtml}<div class="period-records">${recordsHtml}</div>`:'';
+  ['d-dash-period-records','m-dash-period-records'].forEach(id=>{
+    const panel=document.getElementById(id);if(!panel)return;
+    panel.classList.toggle('show',hasPeriod);
+    panel.innerHTML=html;
+  });
+}
+async function bulkUpdateDashDates(){
+  if(!canManageDashPeriodDates()){
+    alert('지적 날짜 변경은 관리자와 지도교사만 할 수 있습니다.');
+    return;
+  }
+  const nextDate=dashBulkDate;
+  const selected=dashPeriodRecords.filter(record=>dashSelectedPeriodRecordIds.has(record.id));
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(nextDate||'')){showToast('변경할 날짜를 선택하세요.');return;}
+  if(!selected.length){showToast('날짜를 변경할 지적 사항을 선택하세요.');return;}
+  if(!confirm(`선택한 ${selected.length}건의 지적 날짜를 ${nextDate}로 변경하시겠습니까?`))return;
+  dashPeriodSaving=true;renderDashPeriodRecords();
+  try{
+    for(let index=0;index<selected.length;index+=400){
+      const batch=db.batch();
+      selected.slice(index,index+400).forEach(record=>batch.update(db.collection('violations').doc(record.id),{
+        date:nextDate,
+        editLog:firebase.firestore.FieldValue.arrayUnion({editedBy:currentUserData?.name||'관리자',editedAt:new Date().toISOString(),previousDate:record.date,changedDate:nextDate})
+      }));
+      await batch.commit();
+    }
+    dashSelectedPeriodRecordIds.clear();
+    showToast(`선택한 ${selected.length}건의 지적 날짜를 변경했습니다.`);
+    await loadDashPeriod();
+  }catch(error){
+    console.warn('dashboard period date update error',error);
+    alert('지적 날짜를 변경하지 못했습니다. 다시 시도해 주세요.');
+  }finally{
+    dashPeriodSaving=false;renderDashPeriodRecords();
+  }
+}
 
 function renderDashboard(){
   let list=[...allStudents];
@@ -1895,6 +1975,7 @@ function renderDashboard(){
   if(dashQuery)list=list.filter(s=>s.name.includes(dashQuery));
   if(dashPeriodStudentIds!==null)list=list.filter(s=>dashPeriodStudentIds.has(s.id));
   renderDashPeriodStatus();
+  renderDashPeriodRecords();
   // 봉사 필요 학생 항상 최상단, 이후 선택된 정렬 기준 적용
   const withService = list.filter(s=>needsService(allStats[s.id]));
   const withoutService = list.filter(s=>!needsService(allStats[s.id]));

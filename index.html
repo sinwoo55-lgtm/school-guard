@@ -109,10 +109,10 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
 .svc-banner-text{font-size:12px;font-weight:700;color:var(--danger)}
 
 /* ── MODAL ── */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .2s}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:flex-end;justify-content:center;touch-action:none;overscroll-behavior:contain}
 .modal-overlay.hidden{display:none}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.modal{background:white;border-radius:22px 22px 0 0;padding:20px 20px max(env(safe-area-inset-bottom),20px);width:100%;max-width:500px;max-height:88vh;overflow-y:auto;animation:slideUp .25s cubic-bezier(.32,.72,0,1)}
+.modal{background:white;border-radius:22px 22px 0 0;padding:20px 20px max(env(safe-area-inset-bottom),20px);width:100%;max-width:500px;max-height:88vh;overflow-y:auto;touch-action:pan-y;overscroll-behavior:contain}
 .app-toast{position:fixed;top:24px;left:50%;z-index:300;transform:translate(-50%,-12px);width:min(calc(100% - 32px),420px);padding:14px 18px;border-radius:12px;background:var(--g900);color:white;font-size:14px;font-weight:700;box-shadow:var(--sh-lg);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;text-align:center}
 .app-toast.show{opacity:1;transform:translate(-50%,0)}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
@@ -2536,9 +2536,22 @@ async function confirmExcelUpload(students, btn) {
 // ═══════════════════════════════════════
 // 모달 헬퍼
 // ═══════════════════════════════════════
-function openModal(id){document.getElementById(id).classList.remove('hidden');document.body.style.overflow='hidden';}
-function closeModal(id){document.getElementById(id).classList.add('hidden');document.body.style.overflow='';}
-function handleOverlay(e,id){if(e.target===document.getElementById(id))closeModal(id);}
+function openModal(id){
+  const modal=document.getElementById(id);
+  if(!modal||!modal.classList.contains('hidden'))return;
+  modal.classList.remove('hidden');
+}
+function closeModal(id){
+  const modal=document.getElementById(id);
+  if(!modal||modal.classList.contains('hidden'))return;
+  modal.classList.add('hidden');
+}
+function handleOverlay(e,id){
+  if(e.target!==document.getElementById(id))return;
+  e.preventDefault();
+  e.stopPropagation();
+  closeModal(id);
+}
 
 // ═══════════════════════════════════════
 // 정렬

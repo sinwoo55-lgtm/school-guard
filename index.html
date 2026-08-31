@@ -135,6 +135,13 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
 .sort-label{font-size:12px;font-weight:700;color:var(--g400);white-space:nowrap}
 .sort-chip{padding:6px 14px;border:2px solid var(--g200);background:white;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;color:var(--g500);font-family:inherit;transition:all .15s;white-space:nowrap}
 .sort-chip.active{border-color:var(--primary);color:var(--primary);background:var(--primary-p)}
+/* ── 지적 기간 조회 ── */
+.period-filter{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:0 0 12px}
+.period-label{font-size:12px;font-weight:700;color:var(--g400);white-space:nowrap}
+.period-date{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--g500)}
+.period-date input{width:138px;padding:7px 8px;border:1.5px solid var(--g200);border-radius:8px;background:white;color:var(--g700);font:inherit}
+.period-status{min-height:18px;font-size:12px;font-weight:600;color:var(--primary);padding:0 0 10px}
+.period-status.error{color:var(--danger)}
 /* ── 맨 위로 버튼 ── */
 .scroll-top-btn{
   position:fixed;bottom:84px;right:16px;z-index:80;
@@ -809,6 +816,18 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
                 <button class="sort-chip" id="td-sort-count" onclick="setSort('count')">지적횟수순</button>
               </div>
             </div>
+            <div class="period-filter">
+              <span class="period-label">지적 기간</span>
+              <button class="sort-chip" data-dash-period="today" onclick="setDashPeriodPreset('today')">오늘</button>
+              <button class="sort-chip" data-dash-period="week" onclick="setDashPeriodPreset('week')">최근 7일</button>
+              <button class="sort-chip" data-dash-period="month" onclick="setDashPeriodPreset('month')">최근 1개월</button>
+              <label class="period-date">시작 <input type="date" id="d-dash-date-start"></label>
+              <span style="color:var(--g300)">~</span>
+              <label class="period-date">종료 <input type="date" id="d-dash-date-end"></label>
+              <button class="btn btn-secondary btn-sm" onclick="applyDashPeriod('d')">조회</button>
+              <button class="btn btn-ghost btn-sm" onclick="clearDashPeriod()">초기화</button>
+            </div>
+            <div class="period-status" id="d-dash-period-status"></div>
             <!-- 데스크탑 테이블 -->
             <div class="desktop-table">
               <div class="dt-header"><div>학생</div><div>학년/반</div><div>누적 지적</div><div>봉사 완료</div><div>상태</div></div>
@@ -824,6 +843,17 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
               <button class="sort-chip active" id="tm-sort-number" onclick="setSort('number')">학번순</button>
               <button class="sort-chip" id="tm-sort-count" onclick="setSort('count')">지적횟수순</button>
             </div>
+            <div class="period-filter" style="padding:0 16px 10px">
+              <span class="period-label">지적 기간</span>
+              <button class="sort-chip" data-dash-period="today" onclick="setDashPeriodPreset('today')">오늘</button>
+              <button class="sort-chip" data-dash-period="week" onclick="setDashPeriodPreset('week')">7일</button>
+              <button class="sort-chip" data-dash-period="month" onclick="setDashPeriodPreset('month')">1개월</button>
+              <label class="period-date">시작 <input type="date" id="m-dash-date-start"></label>
+              <label class="period-date">종료 <input type="date" id="m-dash-date-end"></label>
+              <button class="btn btn-secondary btn-sm" onclick="applyDashPeriod('m')">조회</button>
+              <button class="btn btn-ghost btn-sm" onclick="clearDashPeriod()">초기화</button>
+            </div>
+            <div class="period-status" id="m-dash-period-status" style="padding:0 16px 10px"></div>
             <div class="search-wrap" style="padding:0 16px 10px"><input type="text" class="finput" placeholder="🔍 이름 검색..." oninput="dashSearch(this.value)"></div>
             <div id="m-dashboard-list"></div>
           </div>
@@ -1185,6 +1215,7 @@ let allStudents=[],allStats={},allViolations=[];
 let studentsUnsubscribe=null,statsUnsubscribe=null,violationsUnsubscribe=null;
 let isSubmittingViolation=false,listRenderFrame=null;
 let dashFilter='all',dashQuery='',filterGradeVal='',filterClassVal='';
+let dashDateStart='',dashDateEnd='',dashPeriodStudentIds=null,dashPeriodRecordCount=0,dashPeriodLoading=false,dashPeriodError='',dashPeriodRequest=0;
 let sortMode='number'; // 'number'=학번순, 'count'=지적횟수순
 
 // ═══════════════════════════════════════
@@ -1779,12 +1810,89 @@ function setDashFilter(f,btn){
   btn.classList.add('active');renderDashboard();
 }
 function dashSearch(q){dashQuery=q;renderDashboard();}
+function koreaDateKey(daysAgo=0){
+  const parts=Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).filter(part=>part.type!=='literal').map(part=>[part.type,part.value]));
+  const date=new Date(Date.UTC(Number(parts.year),Number(parts.month)-1,Number(parts.day)-daysAgo));
+  return date.toISOString().slice(0,10);
+}
+function setDashDateInputs(start,end){
+  dashDateStart=start;dashDateEnd=end;
+  ['d','m'].forEach(prefix=>{
+    const startInput=document.getElementById(prefix+'-dash-date-start');
+    const endInput=document.getElementById(prefix+'-dash-date-end');
+    if(startInput)startInput.value=start;
+    if(endInput)endInput.value=end;
+  });
+}
+function setDashPeriodPreset(period){
+  const days={today:0,week:6,month:29}[period];
+  const end=koreaDateKey();
+  setDashDateInputs(koreaDateKey(days),end);
+  document.querySelectorAll('[data-dash-period]').forEach(button=>button.classList.toggle('active',button.dataset.dashPeriod===period));
+  loadDashPeriod();
+}
+function applyDashPeriod(prefix){
+  const start=document.getElementById(prefix+'-dash-date-start')?.value||'';
+  const end=document.getElementById(prefix+'-dash-date-end')?.value||'';
+  if(!start||!end){
+    showToast('시작일과 종료일을 모두 선택하세요.');
+    return;
+  }
+  if(start>end){
+    showToast('종료일은 시작일보다 빠를 수 없습니다.');
+    return;
+  }
+  setDashDateInputs(start,end);
+  document.querySelectorAll('[data-dash-period]').forEach(button=>button.classList.remove('active'));
+  loadDashPeriod();
+}
+function clearDashPeriod(){
+  dashPeriodRequest++;
+  dashPeriodStudentIds=null;dashPeriodRecordCount=0;dashPeriodLoading=false;dashPeriodError='';
+  setDashDateInputs('','');
+  document.querySelectorAll('[data-dash-period]').forEach(button=>button.classList.remove('active'));
+  renderDashboard();
+}
+async function loadDashPeriod(){
+  const start=dashDateStart,end=dashDateEnd;
+  if(!start||!end)return clearDashPeriod();
+  const request=++dashPeriodRequest;
+  dashPeriodLoading=true;dashPeriodError='';
+  renderDashboard();
+  try{
+    const snap=await db.collection('violations').where('date','>=',start).where('date','<=',end).get();
+    if(request!==dashPeriodRequest)return;
+    const records=snap.docs.map(doc=>doc.data()).filter(record=>record.deleted===false&&!record.isExtraService&&record.studentId&&record.studentId!=='ALL');
+    dashPeriodStudentIds=new Set(records.map(record=>record.studentId));
+    dashPeriodRecordCount=records.length;
+  }catch(error){
+    if(request!==dashPeriodRequest)return;
+    console.warn('dashboard period query error',error);
+    dashPeriodStudentIds=new Set();dashPeriodRecordCount=0;
+    dashPeriodError='기간 지적 기록을 불러오지 못했습니다. 다시 조회해 주세요.';
+  }finally{
+    if(request===dashPeriodRequest){dashPeriodLoading=false;renderDashboard();}
+  }
+}
+function renderDashPeriodStatus(){
+  let message='',isError=false;
+  if(dashPeriodLoading)message='기간 지적 기록을 불러오는 중입니다...';
+  else if(dashPeriodError){message=dashPeriodError;isError=true;}
+  else if(dashPeriodStudentIds!==null)message=`${dashDateStart} ~ ${dashDateEnd} · 지적 ${dashPeriodRecordCount}건 · 학생 ${dashPeriodStudentIds.size}명`;
+  ['d-dash-period-status','m-dash-period-status'].forEach(id=>{
+    const status=document.getElementById(id);if(!status)return;
+    status.textContent=message;
+    status.classList.toggle('error',isError);
+  });
+}
 
 function renderDashboard(){
   let list=[...allStudents];
   if(dashFilter==='service')list=list.filter(s=>needsService(allStats[s.id]));
   else if(['1','2','3'].includes(dashFilter))list=list.filter(s=>String(s.grade)===dashFilter);
   if(dashQuery)list=list.filter(s=>s.name.includes(dashQuery));
+  if(dashPeriodStudentIds!==null)list=list.filter(s=>dashPeriodStudentIds.has(s.id));
+  renderDashPeriodStatus();
   // 봉사 필요 학생 항상 최상단, 이후 선택된 정렬 기준 적용
   const withService = list.filter(s=>needsService(allStats[s.id]));
   const withoutService = list.filter(s=>!needsService(allStats[s.id]));

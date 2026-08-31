@@ -140,6 +140,8 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
 .period-label{font-size:12px;font-weight:700;color:var(--g400);white-space:nowrap}
 .period-date{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--g500)}
 .period-date input{width:138px;padding:7px 8px;border:1.5px solid var(--g200);border-radius:8px;background:white;color:var(--g700);font:inherit}
+.period-action{height:34px !important;margin-top:0 !important;padding:0 12px !important;display:inline-flex !important;align-items:center;justify-content:center}
+.period-filter .btn+.btn{margin-top:0}
 .period-status{min-height:18px;font-size:12px;font-weight:600;color:var(--primary);padding:0 0 10px}
 .period-status.error{color:var(--danger)}
 /* ── 맨 위로 버튼 ── */
@@ -620,8 +622,8 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
               </div>
               <div class="sort-bar" style="margin-left:auto">
                 <span class="sort-label">정렬</span>
-                <button class="sort-chip active" id="d-sort-number" onclick="setSort('number')">학번순</button>
-                <button class="sort-chip" id="d-sort-count" onclick="setSort('count')">지적횟수순</button>
+                <button class="sort-chip active" data-sort-mode="number" id="d-sort-number" onclick="setSort('number')">학번순</button>
+                <button class="sort-chip" data-sort-mode="count" id="d-sort-count" onclick="setSort('count')">지적횟수순</button>
               </div>
               </div>
               <div class="filter-groups">
@@ -669,8 +671,8 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
               </div>
               <div class="sort-bar" style="padding:12px 0 0">
                 <span class="sort-label">정렬</span>
-                <button class="sort-chip active" id="m-sort-number" onclick="setSort('number')">학번순</button>
-                <button class="sort-chip" id="m-sort-count" onclick="setSort('count')">지적횟수순</button>
+                <button class="sort-chip active" data-sort-mode="number" id="m-sort-number" onclick="setSort('number')">학번순</button>
+                <button class="sort-chip" data-sort-mode="count" id="m-sort-count" onclick="setSort('count')">지적횟수순</button>
               </div>
             </div>
             <div id="m-stu-list"></div>
@@ -812,8 +814,8 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
                 <button class="chip" onclick="setDashFilter('3',this)">3학년</button>
               </div>
               <div style="display:flex;gap:6px;flex-shrink:0">
-                <button class="sort-chip active" id="td-sort-number" onclick="setSort('number')">학번순</button>
-                <button class="sort-chip" id="td-sort-count" onclick="setSort('count')">지적횟수순</button>
+                <button class="sort-chip active" data-sort-mode="number" id="td-sort-number" onclick="setSort('number')">학번순</button>
+                <button class="sort-chip" data-sort-mode="count" id="td-sort-count" onclick="setSort('count')">지적횟수순</button>
               </div>
             </div>
             <div class="period-filter">
@@ -824,8 +826,8 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
               <label class="period-date">시작 <input type="date" id="d-dash-date-start"></label>
               <span style="color:var(--g300)">~</span>
               <label class="period-date">종료 <input type="date" id="d-dash-date-end"></label>
-              <button class="btn btn-secondary btn-sm" onclick="applyDashPeriod('d')">조회</button>
-              <button class="btn btn-ghost btn-sm" onclick="clearDashPeriod()">초기화</button>
+              <button class="btn btn-primary btn-sm period-action" onclick="applyDashPeriod('d')">조회</button>
+              <button class="btn btn-ghost btn-sm period-action" onclick="clearDashPeriod()">초기화</button>
             </div>
             <div class="period-status" id="d-dash-period-status"></div>
             <!-- 데스크탑 테이블 -->
@@ -840,8 +842,8 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
             <div class="chip-row"><button class="chip active" onclick="setDashFilter('all',this)">전체</button><button class="chip" onclick="setDashFilter('service',this)">🚨 봉사 필요</button><button class="chip" onclick="setDashFilter('1',this)">1학년</button><button class="chip" onclick="setDashFilter('2',this)">2학년</button><button class="chip" onclick="setDashFilter('3',this)">3학년</button></div>
             <div class="sort-bar">
               <span class="sort-label">정렬</span>
-              <button class="sort-chip active" id="tm-sort-number" onclick="setSort('number')">학번순</button>
-              <button class="sort-chip" id="tm-sort-count" onclick="setSort('count')">지적횟수순</button>
+              <button class="sort-chip active" data-sort-mode="number" id="tm-sort-number" onclick="setSort('number')">학번순</button>
+              <button class="sort-chip" data-sort-mode="count" id="tm-sort-count" onclick="setSort('count')">지적횟수순</button>
             </div>
             <div class="period-filter" style="padding:0 16px 10px">
               <span class="period-label">지적 기간</span>
@@ -850,8 +852,8 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
               <button class="sort-chip" data-dash-period="month" onclick="setDashPeriodPreset('month')">1개월</button>
               <label class="period-date">시작 <input type="date" id="m-dash-date-start"></label>
               <label class="period-date">종료 <input type="date" id="m-dash-date-end"></label>
-              <button class="btn btn-secondary btn-sm" onclick="applyDashPeriod('m')">조회</button>
-              <button class="btn btn-ghost btn-sm" onclick="clearDashPeriod()">초기화</button>
+              <button class="btn btn-primary btn-sm period-action" onclick="applyDashPeriod('m')">조회</button>
+              <button class="btn btn-ghost btn-sm period-action" onclick="clearDashPeriod()">초기화</button>
             </div>
             <div class="period-status" id="m-dash-period-status" style="padding:0 16px 10px"></div>
             <div class="search-wrap" style="padding:0 16px 10px"><input type="text" class="finput" placeholder="🔍 이름 검색..." oninput="dashSearch(this.value)"></div>
@@ -2666,12 +2668,10 @@ function handleOverlay(e,id){
 // ═══════════════════════════════════════
 function setSort(mode){
   sortMode = mode;
-  const numMode = mode === 'number';
 
-  // sort-chip 동기화 (기존)
-  document.querySelectorAll('.sort-chip').forEach(b=>{
-    const isNum = b.onclick?.toString().includes("'number'");
-    b.classList.toggle('active', numMode ? isNum : !isNum);
+  // 정렬 버튼만 동기화한다. 기간 빠른 선택 버튼은 별도 상태를 유지한다.
+  document.querySelectorAll('[data-sort-mode]').forEach(b=>{
+    b.classList.toggle('active', b.dataset.sortMode===mode);
   });
 
   renderSearch();

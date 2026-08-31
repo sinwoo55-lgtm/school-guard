@@ -997,7 +997,7 @@ select.finput{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.
       <label class="flabel">기타 사유</label>
       <input type="text" id="reason-detail-input" class="finput" placeholder="직접 입력">
     </div>
-    <button class="btn btn-danger" onclick="submitViolation()">위반 기록 저장</button>
+    <button class="btn btn-danger" id="mv-submit-btn" onclick="submitViolation()">위반 기록 저장</button>
   </div>
 </div>
 
@@ -1181,7 +1181,9 @@ try{
 // 앱 상태
 // ═══════════════════════════════════════
 let currentUser=null,currentUserData=null,selectedStudent=null,selectedReason=null;
-let allStudents=[],allStats={},allViolations=[],studentsUnsubscribe=null;
+let allStudents=[],allStats={},allViolations=[];
+let studentsUnsubscribe=null,statsUnsubscribe=null,violationsUnsubscribe=null;
+let isSubmittingViolation=false,listRenderFrame=null;
 let dashFilter='all',dashQuery='',filterGradeVal='',filterClassVal='';
 let sortMode='number'; // 'number'=학번순, 'count'=지적횟수순
 
@@ -1401,7 +1403,11 @@ async function doLogout(){await auth.signOut();}
 if(auth){
   auth.onAuthStateChanged(async(user)=>{
     clearTimeout(window._loadTimer);
-    if(!user){studentsUnsubscribe?.();studentsUnsubscribe=null;currentUser=null;currentUserData=null;showScreen('auth');return;}
+    if(!user){
+      studentsUnsubscribe?.();statsUnsubscribe?.();violationsUnsubscribe?.();
+      studentsUnsubscribe=null;statsUnsubscribe=null;violationsUnsubscribe=null;
+      currentUser=null;currentUserData=null;showScreen('auth');return;
+    }
     currentUser=user;
     try{
       const doc=await db.collection('users').doc(user.uid).get();
@@ -1416,7 +1422,7 @@ if(auth){
       }
       if(currentUserData.role==='student'){initStudentScreen();}
       else{initTeacherScreen();}
-      await loadStudents();subscribeStudents();await loadStats();
+      await loadStudents();subscribeStudents();subscribeStats();
     }catch(e){console.error(e);showScreen('auth');}
   });
 }else{showScreen('auth');}
@@ -1513,7 +1519,7 @@ function subscribeStudents(){
   studentsUnsubscribe?.();
   studentsUnsubscribe=db.collection('students').orderBy('grade').orderBy('class').orderBy('number').onSnapshot(snap=>{
     allStudents=snap.docs.map(d=>({id:d.id,...d.data()})).filter(student=>student.active!==false);
-    renderSearch();renderDashboard();
+    scheduleTeacherListRender();
   },error=>console.warn('student roster realtime update error',error));
 }
 async function refreshStudentRoster(){
@@ -1524,20 +1530,29 @@ async function refreshStudentRoster(){
 async function loadStats(){
   const snap=await db.collection('studentStats').get();
   allStats={};snap.docs.forEach(d=>{allStats[d.id]=d.data();});
-  renderSearch();renderDashboard();
+  scheduleTeacherListRender();
 }
 function subscribeStats(){
-  db.collection('studentStats').onSnapshot(snap=>{
+  statsUnsubscribe?.();
+  statsUnsubscribe=db.collection('studentStats').onSnapshot(snap=>{
     allStats={};snap.docs.forEach(d=>{allStats[d.id]=d.data();});
-    renderSearch();renderDashboard();
+    scheduleTeacherListRender();
+  },error=>console.warn('student stats realtime update error',error));
+}
+function scheduleTeacherListRender(){
+  if(listRenderFrame!==null)return;
+  listRenderFrame=requestAnimationFrame(()=>{
+    listRenderFrame=null;
+    renderSearch();
+    if(document.getElementById('tea-page-dashboard')?.style.display!=='none')renderDashboard();
   });
 }
-async function loadAllViolations(){
-  db.collection('violations').where('deleted','==',false).orderBy('timestamp','desc').limit(300).onSnapshot(snap=>{
+function loadAllViolations(){
+  violationsUnsubscribe?.();
+  violationsUnsubscribe=db.collection('violations').where('deleted','==',false).orderBy('timestamp','desc').limit(300).onSnapshot(snap=>{
     allViolations=snap.docs.map(d=>({id:d.id,...d.data()}));
     renderViolations();
-  });
-  subscribeStats();
+  },error=>console.warn('violation realtime update error',error));
 }
 
 // ═══════════════════════════════════════
@@ -1608,6 +1623,7 @@ let violationCalledFromDetail = false;
 function openViolationModal(sid){
   violationCalledFromDetail = false;
   const s=allStudents.find(x=>x.id===sid);if(!s)return;
+  setViolationSubmitting(false);
   selectedStudent=s;selectedReason=null;
   document.getElementById('mv-name').textContent=s.name;
   document.getElementById('mv-info').textContent=`${s.grade}학년 ${s.class}반 ${s.number}번`;
@@ -1622,6 +1638,7 @@ function openViolationModal(sid){
 function openViolationFromDetail(sid){
   violationCalledFromDetail = true;
   const s=allStudents.find(x=>x.id===sid);if(!s)return;
+  setViolationSubmitting(false);
   selectedStudent=s;selectedReason=null;
   document.getElementById('mv-name').textContent=s.name;
   document.getElementById('mv-info').textContent=`${s.grade}학년 ${s.class}반 ${s.number}번`;
@@ -1634,49 +1651,74 @@ function openViolationFromDetail(sid){
   openModal('modal-violation');
 }
 function selectReason(r){
+  if(isSubmittingViolation)return;
   selectedReason=r;
   document.querySelectorAll('.reason-btn').forEach(b=>b.classList.remove('selected'));
   document.getElementById('rb-'+r).classList.add('selected');
   document.getElementById('reason-detail-wrap').style.display=r==='기타'?'block':'none';
 }
+function setViolationSubmitting(submitting){
+  isSubmittingViolation=submitting;
+  const submitButton=document.getElementById('mv-submit-btn');
+  if(submitButton){
+    submitButton.disabled=submitting;
+    submitButton.textContent=submitting?'저장 중입니다...':'위반 기록 저장';
+  }
+  document.querySelectorAll('.reason-btn').forEach(button=>button.disabled=submitting);
+  const detailInput=document.getElementById('reason-detail-input');
+  if(detailInput)detailInput.disabled=submitting;
+  const closeButton=document.querySelector('#modal-violation .modal-close');
+  if(closeButton)closeButton.disabled=submitting;
+}
 async function submitViolation(){
+  if(isSubmittingViolation)return;
   if(!selectedReason)return showAlert('mv-alert','위반 사유를 선택하세요.');
   const detail=document.getElementById('reason-detail-input').value.trim();
   if(selectedReason==='기타'&&!detail)return showAlert('mv-alert','기타 사유를 입력하세요.');
+  const student=selectedStudent;
+  const reason=selectedReason;
+  if(!student)return;
+  setViolationSubmitting(true);
   const today=getToday();
-  // 중복체크: studentId 단일조건 후 클라이언트 필터
-  const dupSnap=await db.collection('violations').where('studentId','==',selectedStudent.id).get();
-  const isDup=dupSnap.docs.some(d=>{ const v=d.data(); return v.reason===selectedReason && v.date===today && v.deleted===false; });
-  const vData={studentId:selectedStudent.id,studentName:selectedStudent.name,grade:selectedStudent.grade,class:selectedStudent.class,number:selectedStudent.number,reason:selectedReason,reasonDetail:detail,date:today,timestamp:firebase.firestore.FieldValue.serverTimestamp(),reportedBy:currentUser.uid,reportedByName:currentUserData.name,counted:!isDup,deleted:false,isExtraService:false,editLog:[]};
-  const batch=db.batch();
-  batch.set(db.collection('violations').doc(),vData);
-  if(!isDup){
-    const sRef=db.collection('studentStats').doc(selectedStudent.id);
-    const sDoc=await sRef.get();
-    if(sDoc.exists){batch.update(sRef,{violationCount:firebase.firestore.FieldValue.increment(1)});}
-    else{batch.set(sRef,{studentId:selectedStudent.id,studentName:selectedStudent.name,grade:selectedStudent.grade,class:selectedStudent.class,number:selectedStudent.number,violationCount:1,serviceCompletedCount:0,extraServiceOrders:0});}
-  }
-  await batch.commit();
-  if(isDup){
-    showAlert('mv-alert','⚠️ 오늘 이미 같은 사유로 지적됐습니다. 기록은 저장되나 횟수에는 포함되지 않습니다.','warning');
-    if(violationCalledFromDetail){
-      setTimeout(async()=>{
-        closeModal('modal-violation');
-        await openStudentDetail(selectedStudent.id);
-      },2000);
+  try{
+    // 중복체크: studentId 단일조건 후 클라이언트 필터
+    const dupSnap=await db.collection('violations').where('studentId','==',student.id).get();
+    const isDup=dupSnap.docs.some(d=>{ const v=d.data(); return v.reason===reason && v.date===today && v.deleted===false; });
+    const vData={studentId:student.id,studentName:student.name,grade:student.grade,class:student.class,number:student.number,reason,reasonDetail:detail,date:today,timestamp:firebase.firestore.FieldValue.serverTimestamp(),reportedBy:currentUser.uid,reportedByName:currentUserData.name,counted:!isDup,deleted:false,isExtraService:false,editLog:[]};
+    const batch=db.batch();
+    batch.set(db.collection('violations').doc(),vData);
+    if(!isDup){
+      const sRef=db.collection('studentStats').doc(student.id);
+      const sDoc=await sRef.get();
+      if(sDoc.exists){batch.update(sRef,{violationCount:firebase.firestore.FieldValue.increment(1)});}
+      else{batch.set(sRef,{studentId:student.id,studentName:student.name,grade:student.grade,class:student.class,number:student.number,violationCount:1,serviceCompletedCount:0,extraServiceOrders:0});}
     }
-  } else {
-    showAlert('mv-alert','✅ 위반 기록이 저장됐습니다.','success');
-    if(violationCalledFromDetail){
-      setTimeout(async()=>{
-        closeModal('modal-violation');
-        await openStudentDetail(selectedStudent.id);
-      },1200);
+    await batch.commit();
+    if(isDup){
+      showAlert('mv-alert','⚠️ 오늘 이미 같은 사유로 지적됐습니다. 기록은 저장되나 횟수에는 포함되지 않습니다.','warning');
+      if(violationCalledFromDetail){
+        setTimeout(async()=>{
+          closeModal('modal-violation');
+          await openStudentDetail(student.id);
+        },2000);
+      }
     } else {
-      setTimeout(()=>closeModal('modal-violation'),1200);
+      showAlert('mv-alert','✅ 위반 기록이 저장됐습니다.','success');
+      if(violationCalledFromDetail){
+        setTimeout(async()=>{
+          closeModal('modal-violation');
+          await openStudentDetail(student.id);
+        },1200);
+      } else {
+        setTimeout(()=>closeModal('modal-violation'),1200);
+      }
     }
+    // 통계 실시간 구독이 바뀐 학생만 포함해 화면을 한 번 갱신한다.
+  }catch(error){
+    console.warn('violation save error',error);
+    showAlert('mv-alert','위반 기록을 저장하지 못했습니다. 네트워크를 확인한 뒤 다시 시도하세요.');
+    setViolationSubmitting(false);
   }
-  await loadStats();
 }
 
 // ═══════════════════════════════════════

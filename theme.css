@@ -27,6 +27,8 @@
 #d-stu-table .dt-row,
 #d-dashboard-header:not(.period-results),
 #d-dashboard-table .dt-row:not(.period-results){text-align:center}
+#d-stu-table .dt-row> :first-child,
+#d-dashboard-table .dt-row:not(.period-results)> :first-child{text-align:left}
 :root{
   --primary:#4668ae;--primary-l:#5276bd;--primary-p:#e8eefb;--primary-deep:#304e89;
   --danger:#b5394b;--danger-p:#fbecef;--warning:#94621d;--warning-p:#faf2e3;

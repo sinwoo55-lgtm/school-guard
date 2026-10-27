@@ -29,6 +29,15 @@
 #d-dashboard-table .dt-row:not(.period-results){text-align:center}
 #d-stu-table .dt-row> :first-child,
 #d-dashboard-table .dt-row:not(.period-results)> :first-child{text-align:left}
+.desktop-table:has(>#d-stu-table)>.dt-header> :first-child,
+#d-dashboard-header:not(.period-results)> :first-child{text-align:left}
+/* Keep the initial loading state consistent with the workspace theme. */
+#screen-loading.active{background:var(--g50);min-height:100dvh}
+#screen-loading .spinner{border-color:var(--g200);border-top-color:var(--primary)}
+#screen-loading .loading-text{color:var(--g500)}
+#screen-loading>div:not(.spinner):not(.loading-text){color:var(--g900)!important}
+/* Prevent legacy emoji from flashing before the icon enhancement runs. */
+:is(.auth-logo,.sidebar-logo-icon,.sni-icon,.mnav-icon,.reason-icon,.stat-icon,.empty-icon,.pending-icon,.search-icon):not(:has(.app-icon)){visibility:hidden}
 :root{
   --primary:#4668ae;--primary-l:#5276bd;--primary-p:#e8eefb;--primary-deep:#304e89;
   --danger:#b5394b;--danger-p:#fbecef;--warning:#94621d;--warning-p:#faf2e3;

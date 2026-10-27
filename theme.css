@@ -1,4 +1,12 @@
 /* Shared light theme. Screen structure and application state remain in index.html. */
+.app-icon{display:inline-block;width:1.15em;height:1.15em;vertical-align:-.18em;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.auth-logo .app-icon{width:44px;height:44px;color:var(--primary)}
+.sidebar-logo-icon .app-icon{width:28px;height:28px;color:var(--nav-text)}
+.sni-icon .app-icon,.mnav-icon .app-icon{width:20px;height:20px}
+.reason-icon .app-icon{width:24px;height:24px;color:var(--primary-deep)}
+.stat-icon .app-icon{width:22px;height:22px;color:var(--g500)}
+.empty-icon .app-icon{width:32px;height:32px;color:var(--g400)}
+.pending-icon .app-icon{width:44px;height:44px;color:var(--primary)}
 :root{
   --primary:#4668ae;--primary-l:#5276bd;--primary-p:#e8eefb;--primary-deep:#304e89;
   --danger:#b5394b;--danger-p:#fbecef;--warning:#94621d;--warning-p:#faf2e3;

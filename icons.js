@@ -29,6 +29,7 @@ function replaceIconText(root) {
       const use = document.createElementNS('http://www.w3.org/2000/svg','use');
       // Seatbelt is distinct from the password lock even though both used the same emoji.
       const name = parent.closest('[id="rb-안전벨트 미착용"]') ? 'seatbelt' : iconNames.get(match[0]);
+      svg.dataset.icon = name;
       use.setAttribute('href',`assets/icons.svg#${name}`);
       svg.append(use);
       fragment.append(svg);

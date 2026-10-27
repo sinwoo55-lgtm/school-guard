@@ -7,6 +7,21 @@
 .stat-icon .app-icon{width:22px;height:22px;color:var(--g500)}
 .empty-icon .app-icon{width:32px;height:32px;color:var(--g400)}
 .pending-icon .app-icon{width:44px;height:44px;color:var(--primary)}
+/* Semantic icon colors; light variants stay legible against the navy navigation. */
+.app-icon[data-icon="school"],.app-icon[data-icon="uniform"],.app-icon[data-icon="search"]{color:#4668ae}
+.app-icon[data-icon="record"],.app-icon[data-icon="folder"],.app-icon[data-icon="key"]{color:#94621d}
+.app-icon[data-icon="user"],.app-icon[data-icon="users"],.app-icon[data-icon="jacket"]{color:#786094}
+.app-icon[data-icon="chart"],.app-icon[data-icon="check"],.app-icon[data-icon="sport"]{color:#297259}
+.app-icon[data-icon="warning"],.app-icon[data-icon="clock"]{color:#a27023}
+.app-icon[data-icon="trash"],.app-icon[data-icon="error"],.app-icon[data-icon="smoking"],.app-icon[data-icon="makeup"]{color:#b5394b}
+.app-icon[data-icon="seatbelt"],.app-icon[data-icon="slipper"],.app-icon[data-icon="lock"]{color:#287f8b}
+.app-icon[data-icon="edit"],.app-icon[data-icon="tag"],.app-icon[data-icon="settings"]{color:#626d91}
+.desktop-sidebar .app-icon[data-icon="school"],.desktop-sidebar .app-icon[data-icon="search"]{color:#bed4ff}
+.desktop-sidebar .app-icon[data-icon="record"]{color:#edcc91}
+.desktop-sidebar .app-icon[data-icon="user"]{color:#dbc5f1}
+.desktop-sidebar .app-icon[data-icon="chart"]{color:#ace0ca}
+.desktop-sidebar .app-icon[data-icon="settings"]{color:#c9d3ef}
+.dt-row .badge{min-width:88px;min-height:28px;justify-content:center;text-align:center;gap:4px;white-space:nowrap}
 :root{
   --primary:#4668ae;--primary-l:#5276bd;--primary-p:#e8eefb;--primary-deep:#304e89;
   --danger:#b5394b;--danger-p:#fbecef;--warning:#94621d;--warning-p:#faf2e3;

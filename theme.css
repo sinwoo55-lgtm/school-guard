@@ -85,6 +85,8 @@ button:disabled{opacity:.55;cursor:not-allowed}
 .reason-btn{border-width:1px;border-radius:8px;min-height:68px;font-size:13px}
 .reason-btn:hover{background:var(--hover)}.reason-btn.selected{background:var(--primary-p);box-shadow:inset 0 0 0 1px var(--primary)}
 .reason-icon{font-size:18px}
+.reason-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.reason-grid>.reason-btn:last-child:nth-child(odd){grid-column:1 / -1}
 .detail-action-row>.btn{min-height:40px;white-space:normal!important}
 .app-toast{border-radius:10px;white-space:pre-line;font-size:13px;background:var(--g900)}
 .mobile-header{background:var(--nav);box-shadow:none;gap:12px;flex-wrap:wrap}

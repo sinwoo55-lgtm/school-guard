@@ -1240,6 +1240,19 @@ try{
 let currentUser=null,currentUserData=null,selectedStudent=null,selectedReason=null;
 let allStudents=[],allStats={},allViolations=[];
 let studentsUnsubscribe=null,statsUnsubscribe=null,violationsUnsubscribe=null;
+// 배포 시 선도부 API의 HTTPS 주소를 여기에 설정한다. 비밀키는 넣지 않는다.
+const ROSTER_REFRESH_URL = 'https://dogae-guard.vercel.app/api/roster-refresh';
+let rosterRefreshTimer=null,rosterRefreshInFlight=false;
+async function refreshHubRoster(){
+  if(!ROSTER_REFRESH_URL||rosterRefreshInFlight||!currentUser||!['teacher','admin'].includes(currentUserData?.role)||currentUserData.status!=='active')return;
+  rosterRefreshInFlight=true;
+  try{
+    const token=await currentUser.getIdToken(),response=await fetch(ROSTER_REFRESH_URL,{method:'POST',headers:{Authorization:'Bearer '+token}});
+    if(!response.ok)throw Error('명단 동기화 요청 실패');
+  }catch(error){console.warn('학생 명단 동기화를 다음 확인 때 다시 시도합니다.',error);}
+  finally{rosterRefreshInFlight=false;}
+}
+
 let isSubmittingViolation=false,listRenderFrame=null;
 let dashFilter='all',dashQuery='',filterGradeVal='',filterClassVal='';
 let dashDateStart='',dashDateEnd='',dashPeriodStudentIds=null,dashPeriodRecords=[],dashPeriodRecordCount=0,dashPeriodLoading=false,dashPeriodError='',dashPeriodRequest=0,dashSelectedPeriodRecordIds=new Set(),dashPeriodSaving=false,dashPeriodSort='latest';
@@ -1478,6 +1491,7 @@ if(auth){
           showScreen('pending');return;
         }
       }
+      if(['teacher','admin'].includes(currentUserData.role)){await refreshHubRoster();clearInterval(rosterRefreshTimer);rosterRefreshTimer=setInterval(()=>{if(!document.hidden)refreshHubRoster()},60000);}
       if(currentUserData.role==='student'){initStudentScreen();}
       else{initTeacherScreen();}
       await loadStudents();subscribeStudents();subscribeStats();
